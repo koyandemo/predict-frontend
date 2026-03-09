@@ -1,0 +1,54 @@
+import { AuthResponseT } from "@/types/auth.type";
+import apiConfig from "./apiConfig";
+
+export const getUserProfile = async (): Promise<AuthResponseT> => {
+  try {
+    const res = await apiConfig.get(`/users/profile`);
+    return res.data;
+  } catch (e: any) {
+    return {
+      success: false,
+      message: 'Failed to fetch profile',
+      error: e.response?.data?.message || e.message,
+    };
+  }
+};
+
+export const updateUserProfile = async (data: any): Promise<AuthResponseT> => {
+  try {
+    const res = await apiConfig.put(`/users/profile`, data);
+    return res.data;
+  } catch (e: any) {
+    return {
+      success: false,
+      message: 'Failed to update profile',
+      error: e.response?.data?.message || e.message,
+    };
+  }
+};
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const res = await apiConfig.get(
+      `/users/by-email?email=${encodeURIComponent(email)}`
+    );
+    return res.data?.data || null;
+  } catch {
+    return null;
+  }
+};
+
+// Get user stats
+export const getUserStats = async (userId: string): Promise<AuthResponseT> => {
+  try {
+    const response = await apiConfig.get(`/users/${userId}/stats`);
+    const result: AuthResponseT = response.data;
+    return result;
+  } catch (error: any) {
+    return {
+      success: false,
+      message: 'Failed to fetch user stats',
+      error: error.response?.data?.message || error.message
+    };
+  }
+};

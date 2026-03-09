@@ -1,0 +1,36 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.predictocean.com/sitemap.xml
+
+# Disallow sensitive pages
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /login/
+Disallow: /register/
+
+# Crawl-delay: 10 (optional, allows 1 request every 10 seconds)
+Crawl-delay: 10
+
+# Host directive (specifies preferred domain)
+Host: www.predictocean.com
+
+# Additional rules for specific bots if needed
+User-agent: Googlebot
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block specific user agents if necessary
+# User-agent: BadBot
+# Disallow: /
