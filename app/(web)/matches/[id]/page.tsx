@@ -60,9 +60,9 @@ export default function MatchPage({ params }: MatchPageProps) {
 
           <ScorePredictionCard match={match} />
 
-          {/* <div className="relative">
+          <div className="relative">
             <CommentsSection matchId={match.id} />
-          </div> */}
+          </div>
         </div>
       </main>
     </div>

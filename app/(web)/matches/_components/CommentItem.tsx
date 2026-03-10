@@ -20,7 +20,7 @@ import UserAvatar from "../../../../components/UserAvatar";
 
 interface CommentItemProps {
   comment: CommentT;
-  matchId: string;
+  matchId: number;
   onReplySuccess?: () => void;
   depth?: number;
 }
@@ -36,7 +36,7 @@ const CommentItemComponent = ({
   const [dislikes, setDislikes] = useState(comment.dislikes || 0);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
-  const [replyCount, setReplyCount] = useState(comment.replyCount || 0);
+  const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
   const [replies, setReplies] = useState<CommentT[]>([]);
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -123,7 +123,7 @@ const CommentItemComponent = ({
 
     try {
       const response = await addCommentReaction(
-        comment.id.replace("comment-", ""),
+        comment.id,
         user.user_id,
         reactionType
       );
@@ -181,9 +181,9 @@ const CommentItemComponent = ({
     setLoadingReplies(true);
     try {
       const response = await getCommentReplies(
-        comment.id.replace("comment-", ""),
+        comment.id,
         1,
-        50 // Load reasonable number of replies
+        50
       );
 
       if (response.success && response.data) {
@@ -197,21 +197,19 @@ const CommentItemComponent = ({
             : [];
         }
 
-        const transformedReplies: CommentT[] = repliesData.map((reply: any) => ({
-          id: `comment-${reply.comment_id}`,
-          matchId: reply.match_id?.toString() || "",
-          userId: reply.user_id?.toString() || "",
-          userName: reply.user?.name || `User ${reply.user_id || "unknown"}`,
-          userAvatar: reply.user?.avatar_url || 
-            `/football-fan-avatar-${Math.floor(Math.random() * 3) + 1}.jpg`,
-          userAvatarColor:reply.user?.avatar_bg_color, 
-          content: reply.comment_text || "",
-          timestamp: reply.timestamp || new Date().toISOString(),
-          likes: Math.max(0, reply.like_count || 0),
-          dislikes: Math.max(0, reply.dislike_count || 0),
-          replyCount: reply.reply_count || 0,
-          isReply: true,
-          parentId: comment.id,
+        const transformedReplies: CommentT[] =repliesData.map((reply: any) => ({ 
+          id: reply.id,
+          match_id: reply.match_id,
+          user_id: reply.user_id,
+          user:reply.user,
+          text: reply.text,
+          timestamp: reply.timestamp,
+          likes: 0,
+          dislikes: 0,
+          reply_count: 0,
+          is_replay: true,
+          parent_id: comment.id,
+          has_user_liked: false,
         }));
 
         setReplies(transformedReplies);
@@ -243,31 +241,28 @@ const CommentItemComponent = ({
 
     setIsSubmitting(true);
     try {
-      const parentCommentId = comment.id.replace("comment-", "");
-
+      const parentCommentId = comment.id;
       const response = await createReply(
-        parseInt(matchId),
+        Number(matchId),
         replyContent,
         user.user_id,
         parentCommentId
       );
-
+    
       if (response.success && response.data) {
         const newReply: CommentT = {
-          id: `comment-${response.data.comment_id}`,
-          matchId: response.data.match_id.toString(),
-          userId: response.data.user_id.toString(),
-          userName: user.name || `User ${response.data.user_id}`,
-          userAvatar: user.avatar_url || 
-            `/football-fan-avatar-${Math.floor(Math.random() * 3) + 1}.jpg`,
-          userAvatarColor:user.avatar_bg_color || "",  
-          content: response.data.comment_text,
+          id: response.data.id,
+          match_id: response.data.match_id.toString(),
+          user_id: response.data.user_id.toString(),
+          user:response?.data?.user,
+          text: response.data.text,
           timestamp: response.data.timestamp,
           likes: 0,
           dislikes: 0,
-          replyCount: 0,
-          isReply: true,
-          parentId: comment.id,
+          reply_count: 0,
+          is_replay: true,
+          parent_id: comment.id,
+          has_user_liked: false,
         };
 
         setReplies(prev => [newReply, ...prev]);
@@ -307,12 +302,12 @@ const CommentItemComponent = ({
     )}>
       <UserAvatar
         user={{
-          user_id: comment.userId || 'unknown',
-          name: comment.userName,
+          user_id: comment.user_id,
+          name: comment.user?.name,
           email: '',
-          avatar_url: comment.userAvatar,
-          avatar_bg_color:comment.userAvatarColor,
-          type: comment.userType as UserEnumT || UserEnumT.USER
+          avatar_url: comment.user?.avatar_url || "/logo.png",
+          avatar_bg_color:comment.user?.avatar_bg_color,
+          type: comment.user.type as UserEnumT || UserEnumT.USER
         }} 
         size={depth === 0 ? "md" : "sm"}
       />
@@ -320,7 +315,7 @@ const CommentItemComponent = ({
       <div className="flex-1 min-w-0">
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
           <span className="font-semibold text-foreground">
-            {comment.userName}
+            {comment.user?.name}
           </span>
           <span className="text-xs text-muted-foreground">
             {formatTime(comment.timestamp)}
@@ -328,7 +323,7 @@ const CommentItemComponent = ({
         </div>
         
         <p className="text-foreground whitespace-pre-wrap break-words leading-relaxed">
-          {comment.content}
+          {comment.text}
         </p>
 
         <div className="flex flex-wrap items-center gap-4 mt-1">

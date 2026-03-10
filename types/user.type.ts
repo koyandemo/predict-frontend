@@ -5,7 +5,7 @@ export enum UserEnumT {
   }
   
   export interface UserT {
-    user_id: string;
+    user_id: number;
     name: string;
     email: string;
     avatar_url?: string;
