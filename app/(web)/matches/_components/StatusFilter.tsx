@@ -20,9 +20,9 @@ export function StatusFilter({ selectedStatus, onSelectStatus }: StatusFilterPro
         <Badge
           key={status.id}
           variant={selectedStatus === status.id || (selectedStatus === null && status.id === "all") ? status.variant : "outline"}
-          className={`cursor-pointer transition-all ${
+          className={`cursor-pointer  transition-all ${
             selectedStatus === status.id || (selectedStatus === null && status.id === "all")
-              ? "ring-2 ring-primary ring-offset-2"
+              ? "ring-3 ring-primary!"
               : "hover:bg-accent"
           }`}
           onClick={() => onSelectStatus(status.id === "all" ? null : status.id)}

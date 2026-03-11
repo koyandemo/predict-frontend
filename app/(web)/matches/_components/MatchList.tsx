@@ -13,6 +13,7 @@ import { MatchCard } from "./MatchCard";
 import { ErrorDisplay } from "../../../../components/ErrorDisplay";
 import { LeagueFilter } from "./LeagueFilter";
 import { StatusFilter } from "./StatusFilter";
+import MatchListFilterCard from "./MatchListFilterCard";
 
 const buildFilters = (league: string | null, status: string | null) => {
   const filters: Record<string, string | number> = {};
@@ -107,10 +108,9 @@ export function MatchesList() {
         1
       )} Matches`;
     }
-
     if (selectedLeague && selectedLeague !== "all") {
       return `${
-        leagues.find((l) => l.id === selectedLeague)?.name ?? ""
+        leagues.find((l) => l.id === parseInt(selectedLeague))?.name ?? ""
       } Matches`;
     }
 
@@ -129,20 +129,20 @@ export function MatchesList() {
         <FilterSkeleton />
       ) : (
         <div className="space-y-4">
-          <FilterCard title="Filter by League">
+          <MatchListFilterCard title="Filter by League">
             <LeagueFilter
               leagues={leagues}
               selectedLeague={selectedLeague}
               onSelectLeague={setSelectedLeague}
             />
-          </FilterCard>
+          </MatchListFilterCard>
 
-          <FilterCard title="Filter by Status">
+          <MatchListFilterCard title="Filter by Status">
             <StatusFilter
               selectedStatus={selectedStatus}
               onSelectStatus={setSelectedStatus}
             />
-          </FilterCard>
+          </MatchListFilterCard>
         </div>
       )}
 
@@ -170,23 +170,6 @@ export function MatchesList() {
           </>
         )}
       </div>
-    </div>
-  );
-}
-
-function FilterCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-card/50 rounded-2xl p-4 border border-border">
-      <h2 className="text-sm font-medium text-muted-foreground mb-3">
-        {title}
-      </h2>
-      {children}
     </div>
   );
 }

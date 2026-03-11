@@ -8,6 +8,7 @@ import {
   getMatchResultSummary,
   MATCH_STATUS_CONFIG,
 } from "@/lib/matchStatusUtils";
+import MatchResultFallbackView from "./MatchResultFallbackView";
 
 interface Props {
   match: MatchT;
@@ -64,41 +65,9 @@ export function MatchResult({ match }: Props) {
             )}
           </>
         ) : (
-          <FallbackView displayStatus={displayStatus} />
+          <MatchResultFallbackView displayStatus={displayStatus} />
         )}
       </CardContent>
     </Card>
-  );
-}
-
-function FallbackView({ displayStatus }: { displayStatus: string }) {
-  if (displayStatus === "postponed") {
-    return (
-      <p className="text-center text-sm text-orange-500">
-        This match has been postponed. New date will be announced soon.
-      </p>
-    );
-  }
-
-  if (displayStatus === "scheduled") {
-    return (
-      <p className="text-center text-sm text-muted-foreground">
-        Match scheduled
-      </p>
-    );
-  }
-
-  if (displayStatus === "kickOffSoon") {
-    return (
-      <p className="text-center text-sm text-muted-foreground">
-        Match will be start soon.
-      </p>
-    );
-  }
-
-  return (
-    <p className="text-center text-sm text-muted-foreground">
-      Match information not available
-    </p>
   );
 }

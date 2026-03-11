@@ -23,7 +23,6 @@ export type MatchT = {
   league: LeagueT;
 };
 
-// Define the API match structure
 export interface ApiMatchT {
   match_id: number;
   league_id: number;
@@ -57,7 +56,13 @@ export interface ApiMatchT {
   };
 }
 
-// Define the vote count structure
+export type MatchVoteT = {
+  home_votes: number;
+  draw_votes: number;
+  away_votes: number;
+  total_votes: number;
+};
+
 export interface ApiVoteCountT {
   vote_id: number;
   match_id: number;
@@ -71,7 +76,6 @@ export interface ApiVoteCountT {
   current_user_vote?: "HOME" | "DRAW" | "AWAY" | "";
 }
 
-// Define the comment structure
 export interface ApiCommentT {
   comment_id: number;
   match_id: number;

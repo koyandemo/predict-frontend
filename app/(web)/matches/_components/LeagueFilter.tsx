@@ -1,72 +1,83 @@
-"use client"
+"use client";
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { cn } from "@/lib/utils"
-import Image from "next/image"
-import { LeagueT } from "@/types/league.type"
+import { useRouter, useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { LeagueT } from "@/types/league.type";
 
 interface LeagueFilterProps {
-  leagues: LeagueT[]
-  selectedLeague: string | null
-  onSelectLeague: (leagueId: string | null) => void
+  leagues: LeagueT[];
+  selectedLeague: string | null;
+  onSelectLeague: (leagueId: string | null) => void;
+}
+
+const PILL_BASE = "flex items-center gap-2 px-3 md:px-4 h-9 rounded-full text-sm font-medium transition-all";
+const PILL_ACTIVE = "bg-primary text-primary-foreground";
+const PILL_INACTIVE = "bg-card text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground";
+
+function isActive(selectedLeague: string | null, leagueId: string) {
+  if (leagueId === "all") return selectedLeague === "all" || selectedLeague === null;
+  return selectedLeague === leagueId;
 }
 
 export function LeagueFilter({ leagues, selectedLeague, onSelectLeague }: LeagueFilterProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  
-  const handleSelectLeague = (leagueId: string | null) => {
-    onSelectLeague(leagueId)
-    
-    // Update URL with query parameter
-    const params = new URLSearchParams(searchParams.toString())
-    if (leagueId && leagueId !== "all") {
-      params.set("league", leagueId)
-    } else {
-      params.delete("league")
-    }
-    
-    router.push(`/matches/?${params.toString()}`)
-  }
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
+  const handleSelect = (leagueId: string | null) => {
+    onSelectLeague(leagueId);
 
+    const params = new URLSearchParams(searchParams.toString());
+    leagueId && leagueId !== "all"
+      ? params.set("league", leagueId)
+      : params.delete("league");
+
+    router.push(`/matches/?${params.toString()}`);
+  };
 
   return (
     <div className="flex flex-wrap gap-2 md:gap-3">
-      <button
-        onClick={() => handleSelectLeague("all")}
-        className={cn(
-          "flex items-center gap-2 px-3 md:px-4 h-[36px] md:h-[42px] rounded-full text-sm font-medium transition-all",
-          selectedLeague === "all" || selectedLeague === null
-            ? "bg-primary text-primary-foreground"
-            : "bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-border",
-        )}
-      >
-        All Leagues
-      </button>
+      <LeaguePill
+        label="All Leagues"
+        active={isActive(selectedLeague, "all")}
+        onClick={() => handleSelect("all")}
+      />
       {leagues.map((league) => (
-        <button
+        <LeaguePill
           key={league.id}
-          onClick={() => handleSelectLeague(league.id)}
-          className={cn(
-            "flex items-center gap-2 px-3 md:px-4 h-[36px] md:h-[42px] rounded-full text-sm font-medium transition-all",
-            selectedLeague === league.id
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-border",
-          )}
-        >
-          {league.logo && (
-            <Image
-              src={league.logo}
-              alt={league.name}
-              width={20}
-              height={20}
-              className="rounded-full object-cover"
-            />
-          )}
-          {league.name}
-        </button>
+          label={league.name}
+          active={isActive(selectedLeague, String(league.id))}
+          logo={league.logo_url}
+          onClick={() => handleSelect(String(league.id))}
+        />
       ))}
     </div>
-  )
+  );
+}
+
+interface LeaguePillProps {
+  label: string;
+  active: boolean;
+  logo?: string | null;
+  onClick: () => void;
+}
+
+function LeaguePill({ label, active, logo, onClick }: LeaguePillProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(PILL_BASE, active ? PILL_ACTIVE : PILL_INACTIVE)}
+    >
+      {logo && (
+        <Image
+          src={logo}
+          alt={label}
+          width={20}
+          height={20}
+          className="rounded-full object-cover"
+        />
+      )}
+      {label}
+    </button>
+  );
 }

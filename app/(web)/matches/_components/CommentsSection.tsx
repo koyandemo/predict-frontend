@@ -15,17 +15,17 @@ import { CommentItem } from "./CommentItem";
 import { CommentForm } from "./CommentForm";
 import { createComment, getMatchComments } from "@/api/comment.api";
 
-interface CommentsSectionProps {
-  matchId: number;
-}
-
-interface CommentPage {
+interface CommentPageT {
   comments: CommentT[];
   nextPage: number | null;
   total: number;
 }
 
-const CommentsSection = ({ matchId }: CommentsSectionProps) => {
+interface Props {
+  matchId: number;
+}
+
+const CommentsSection = ({ matchId }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user, token, isAuthenticated } = useAuth();
@@ -37,7 +37,7 @@ const CommentsSection = ({ matchId }: CommentsSectionProps) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<CommentPage>({
+  } = useInfiniteQuery<CommentPageT>({
     queryKey: ["matchComments", matchId],
     initialPageParam: 1,
 
@@ -80,61 +80,61 @@ const CommentsSection = ({ matchId }: CommentsSectionProps) => {
       return await createComment(Number(matchId), text);
     },
 
-    onMutate: async (text: string) => {
-      setIsSubmitting(true);
+    // onMutate: async (text: string) => {
+    //   setIsSubmitting(true);
 
-      await queryClient.cancelQueries({
-        queryKey: ["matchComments", matchId],
-      });
+    //   await queryClient.cancelQueries({
+    //     queryKey: ["matchComments", matchId],
+    //   });
 
-      const previousData = queryClient.getQueryData<any>([
-        "matchComments",
-        matchId,
-      ]);
+    //   const previousData = queryClient.getQueryData<any>([
+    //     "matchComments",
+    //     matchId,
+    //   ]);
 
-      if (previousData && user) {
-        const optimisticComment: CommentT = {
-          id: Date.now(),
-          match_id: matchId,
-          user_id: user.user_id,
-          text,
-          user: user as any,
-          timestamp: new Date().toISOString(),
-          likes: 0,
-          dislikes: 0,
-          reply_count: 0,
-          is_replay: false,
-          parent_id: 0,
-          has_user_liked: false,
-        };
+    //   if (previousData && user) {
+    //     const optimisticComment: CommentT = {
+    //       id: Date.now(),
+    //       match_id: matchId,
+    //       user_id: user.user_id,
+    //       text,
+    //       user: user as any,
+    //       timestamp: new Date().toISOString(),
+    //       likes: 0,
+    //       dis_likes: 0,
+    //       reply_count: 0,
+    //       is_replay: false,
+    //       parent_id: 0,
+    //       has_user_liked: false,
+    //     };
 
-        queryClient.setQueryData(["matchComments", matchId], (oldData: any) => {
-          if (!oldData) return oldData;
+    //     queryClient.setQueryData(["matchComments", matchId], (oldData: any) => {
+    //       if (!oldData) return oldData;
 
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page: CommentPage, i: number) =>
-              i === 0
-                ? {
-                    ...page,
-                    comments: [optimisticComment, ...page.comments],
-                  }
-                : page
-            ),
-          };
-        });
-      }
+    //       return {
+    //         ...oldData,
+    //         pages: oldData.pages.map((page: CommentPageT, i: number) =>
+    //           i === 0
+    //             ? {
+    //                 ...page,
+    //                 comments: [optimisticComment, ...page.comments],
+    //               }
+    //             : page
+    //         ),
+    //       };
+    //     });
+    //   }
 
-      return { previousData };
-    },
+    //   return { previousData };
+    // },
 
     onError: (err: any, _content, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(
-          ["matchComments", matchId],
-          context.previousData
-        );
-      }
+      // if (context?.previousData) {
+      //   queryClient.setQueryData(
+      //     ["matchComments", matchId],
+      //     context.previousData
+      //   );
+      // }
 
       alert(err.message || "Failed to add comment");
     },
@@ -154,6 +154,8 @@ const CommentsSection = ({ matchId }: CommentsSectionProps) => {
     addCommentMutation.mutate(content);
   };
 
+  const totalComments = commentsData?.pages?.[0]?.total ?? comments.length;
+
   const memoizedCommentItems = useMemo(
     () =>
       comments.map((comment) => (
@@ -170,8 +172,6 @@ const CommentsSection = ({ matchId }: CommentsSectionProps) => {
       )),
     [comments, matchId]
   );
-
-  const totalComments = commentsData?.pages?.[0]?.total ?? comments.length;
 
   return (
     <Card className="bg-card border-border w-full">

@@ -82,7 +82,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <link rel="icon" href="/logo.png" />
       <body className={`${inter.className} font-sans antialiased`}>
         <AuthProviderClient>

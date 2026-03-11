@@ -15,7 +15,7 @@ interface Props {
 
 export default function VotingPanel({ match, onVoteUpdate }: Props) {
   const pathname = usePathname();
-  const { votes, totalVotes, userVote, isVoting, isAuthenticated, vote } =
+  const { votes, totalVotes, userVote, isVoting, isAuthenticated, handleVote } =
     useVoting(match, onVoteUpdate);
 
   const showDraw = match.allow_draw !== false;
@@ -43,7 +43,7 @@ export default function VotingPanel({ match, onVoteUpdate }: Props) {
             logo={match.home_team.logo_url}
             percent={votes.home}
             colorClass="border-emerald-500 bg-emerald-500/10"
-            onClick={() => vote("HOME")}
+            onClick={() => handleVote("HOME")}
           />
 
           {showDraw && (
@@ -53,7 +53,7 @@ export default function VotingPanel({ match, onVoteUpdate }: Props) {
               label="Draw"
               percent={votes.draw}
               colorClass="border-white bg-white/20"
-              onClick={() => vote("DRAW")}
+              onClick={() => handleVote("DRAW")}
             />
           )}
 
@@ -64,7 +64,7 @@ export default function VotingPanel({ match, onVoteUpdate }: Props) {
             logo={match.away_team.logo_url}
             percent={votes.away}
             colorClass="border-blue-500 bg-blue-500/10"
-            onClick={() => vote("AWAY")}
+            onClick={() => handleVote("AWAY")}
           />
         </div>
 

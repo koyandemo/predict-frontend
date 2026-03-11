@@ -34,8 +34,13 @@ export function useVoting(match: MatchT, onVoteUpdate?: () => void) {
     },
   });
 
-  const vote = async (choice: VoteChoice) => {
+  const handleVote = async (choice: VoteChoice) => {
     if (!isAuthenticated) return;
+
+    if (["FINISHED", "POSTPONED"].includes(match.status)) {
+      alert("Voting is closed for this match");
+      return;
+    }
 
     await voteMutation.mutateAsync(choice);
   };
@@ -55,6 +60,6 @@ export function useVoting(match: MatchT, onVoteUpdate?: () => void) {
     isLoading,
     isAuthenticated,
 
-    vote,
+    handleVote,
   };
 }

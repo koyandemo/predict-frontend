@@ -18,19 +18,17 @@ interface MatchPageProps {
 }
 
 export default function MatchPage({ params }: MatchPageProps) {
+  
   const { id } = React.use(params);
-
   const [match, setMatch] = useState<MatchT | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchMatch = useCallback(async () => {
     try {
       const res = await getMatchById(id);
-
       if (!res.success || !res.data) {
         notFound();
       }
-
       setMatch(res.data);
     } catch (error) {
       console.error(error);

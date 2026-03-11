@@ -1,9 +1,5 @@
 import { LeagueT } from "@/types/league.type";
-import {
-  ApiCommentT,
-  ApiVoteCountT,
-  MatchT,
-} from "@/types/match.type";
+import { ApiCommentT, ApiVoteCountT, MatchT } from "@/types/match.type";
 import apiConfig from "./apiConfig";
 import { TeamT } from "@/types/team.type";
 
@@ -29,7 +25,6 @@ export const isBigMatch = (m: MatchT) =>
   !isQuarterFinal(m) &&
   !m.derby;
 
-//no need
 export const getAllMatches = async (filters?: {
   league_id?: number;
   status?: string;
@@ -45,7 +40,7 @@ export const getAllMatches = async (filters?: {
     }
 
     if (filters?.status) {
-      params.append("status", filters.status);
+      params.append("status", filters.status.toUpperCase());
     }
 
     const response = await apiConfig.get(`/matches?${params.toString()}`);
@@ -72,7 +67,6 @@ export const getAllMatches = async (filters?: {
   }
 };
 
-// need to update
 export const getMatchById = async (
   id: string
 ): Promise<ApiResponse<MatchT>> => {
@@ -104,7 +98,6 @@ export const getMatchById = async (
   }
 };
 
-//no need
 export const getAllLeagues = async () => {
   try {
     const response = await apiConfig.get(`/leagues`);
@@ -119,15 +112,9 @@ export const getAllLeagues = async () => {
 
     return {
       success: true,
-      data: result
-        .data!.map((apiLeague: LeagueT) => ({
-          id: apiLeague.id.toString(),
-          name: apiLeague.name,
-          logo: apiLeague.logo_url,
-          country: apiLeague.country,
-          sort_order: apiLeague.sort_order || 0,
-        }))
-        .sort((a: LeagueT, b: LeagueT) => a.sort_order - b.sort_order),
+      data: result.data.sort(
+        (a: LeagueT, b: LeagueT) => a.sort_order - b.sort_order
+      ),
     };
   } catch (error: any) {
     console.error("Error fetching leagues:", error);
@@ -141,7 +128,6 @@ export const getAllLeagues = async () => {
   }
 };
 
-//no need
 export const getAllTeams = async (): Promise<ApiResponse<TeamT[]>> => {
   try {
     const response = await apiConfig.get(`/teams`);
@@ -171,7 +157,6 @@ export const getAllTeams = async (): Promise<ApiResponse<TeamT[]>> => {
   }
 };
 
-// no need
 export const getMatchVoteCounts = async (
   matchId: number
 ): Promise<ApiResponse<ApiVoteCountT>> => {

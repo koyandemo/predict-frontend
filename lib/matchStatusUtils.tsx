@@ -1,20 +1,10 @@
 import { addMinutes, isAfter, isBefore } from "date-fns";
 import { convertTimezoneToUtc } from "@/lib/timezoneUtils";
-import { AlertCircle, Calendar, Clock, LucideIcon, Play, Trophy } from "lucide-react";
+import { AlertCircle, Calendar, Clock, Play, Trophy } from "lucide-react";
 import { MatchT } from "@/types/match.type";
+import { KICKOFF_SOON_MINUTES, MATCH_DURATION_MINUTES, MatchDisplayStatusT, MatchStatusConfigT } from "./utils";
 
-export type MatchDisplayStatus =
-  | "scheduled"
-  | "live"
-  | "finished"
-  | "postponed"
-  | "upcoming"
-  | "kickOffSoon";
-
-const MATCH_DURATION_MINUTES = 120;
-const KICKOFF_SOON_MINUTES = 30;
-
-export function getMatchDisplayStatus(match: MatchT): MatchDisplayStatus {
+export function getMatchDisplayStatus(match: MatchT): MatchDisplayStatusT {
   if (match.status === "FINISHED") return "finished";
   if (match.status === "LIVE") return "live";
   if (match.status === "POSTPONED") return "postponed";
@@ -38,7 +28,7 @@ export function getMatchDisplayStatus(match: MatchT): MatchDisplayStatus {
   return "finished";
 }
 
-export const getStatusBadgeVariant = (status: MatchDisplayStatus) => {
+export const getStatusBadgeVariant = (status: MatchDisplayStatusT) => {
   switch (status) {
     case "live":
       return "destructive";
@@ -56,23 +46,7 @@ export const getStatusBadgeVariant = (status: MatchDisplayStatus) => {
 };
 
 
-export interface MatchStatusConfig {
-  icon: LucideIcon;
-  title: string;
-  subtitle: string;
-  badgeVariant:
-    | "default"
-    | "secondary"
-    | "destructive"
-    | "outline"
-    | "yellow"
-    | "blue";
-  badgeText: string;
-  showScores: boolean;
-  pulse?: boolean;
-}
-
-export const MATCH_STATUS_CONFIG: Record<string, MatchStatusConfig> = {
+export const MATCH_STATUS_CONFIG: Record<string, MatchStatusConfigT> = {
   scheduled: {
     icon: Calendar,
     title: "Upcoming Match",

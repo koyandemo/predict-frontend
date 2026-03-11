@@ -65,19 +65,17 @@ export function Header() {
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            {/* <div className="w-15 h-15 rounded-lg bg-primary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform"> */}
               <Image
                 alt="logo"
-                width={30}
-                height={50}
+                width={22}
+                height={40}
                 src={"/logo.png"}
               />
-            {/* </div> */}
             <div className="leading-tight">
-              <h1 className="text-lg font-bold text-foreground tracking-tight">
-                FootballDebate
+              <h1 className="text-sm font-bold text-foreground tracking-tight">
+                Predict Ocean
               </h1>
-              <p className="hidden sm:block text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
+              <p className="hidden sm:block text-[8px] uppercase font-semibold text-muted-foreground tracking-wider">
                 Predict &amp; Discuss
               </p>
             </div>

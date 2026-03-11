@@ -63,10 +63,10 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
       return;
     }
 
-    // if (["FINISHED","POSTPONED"].includes(match.status)) {
-    //   alert("Voting is closed for this match");
-    //   return;
-    // }
+    if (["FINISHED","POSTPONED"].includes(match.status)) {
+      alert("Voting is closed for this match");
+      return;
+    }
 
     const key = `${p.home_score}-${p.away_score}`;
 

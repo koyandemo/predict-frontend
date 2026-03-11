@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn, formatCommentTime } from "@/lib/utils";
 import { CommentT } from "@/types/comment.type";
 import { Skeleton } from "../../../../components/ui/skeleton";
 import { UserEnumT } from "@/types/user.type";
@@ -33,7 +33,7 @@ const CommentItemComponent = ({
 }: CommentItemProps) => {
 
   const [likes, setLikes] = useState(comment.likes || 0);
-  const [dislikes, setDislikes] = useState(comment.dislikes || 0);
+  const [dislikes, setDislikes] = useState(comment.dis_likes || 0);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
   const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
@@ -46,57 +46,12 @@ const CommentItemComponent = ({
 
   const { user, token, isAuthenticated } = useAuth();
 
-  // Generate cache key for user reactions
-  const getReactionCacheKey = (reactionType: string) => {
-    if (!user) return null;
-    return `comment_reaction_${comment.id}_${user.user_id}_${reactionType}`;
-  };
-
-  // Check cached reactions on mount
-  useEffect(() => {
-    const likeKey = getReactionCacheKey("like");
-    const dislikeKey = getReactionCacheKey("dislike");
-    
-    if (likeKey) {
-      const liked = sessionStorage.getItem(likeKey) === "true";
-      setHasLiked(liked);
-    }
-    
-    if (dislikeKey) {
-      const disliked = sessionStorage.getItem(dislikeKey) === "true";
-      setHasDisliked(disliked);
-    }
-  }, [user, comment.id]);
-
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const handleReaction = async (reactionType: "like" | "dislike") => {
     if (!isAuthenticated || !user || !token) {
       // In a real app, you might want to show a login modal
       return;
-    }
+    }    
 
-    const isCurrentlyActive = reactionType === "like" ? hasLiked : hasDisliked;
-    const cacheKey = getReactionCacheKey(reactionType);
-    
-    // Optimistic update
     if (reactionType === "like") {
       if (hasLiked) {
         setLikes(prev => Math.max(0, prev - 1));
@@ -135,20 +90,8 @@ const CommentItemComponent = ({
         } else {
           setDislikes(response.data.reaction_count);
         }
-        
-        // Cache the reaction state
-        if (cacheKey) {
-          sessionStorage.setItem(cacheKey, String(!isCurrentlyActive));
-          
-          // Clear opposite reaction cache
-          const oppositeKey = getReactionCacheKey(reactionType === "like" ? "dislike" : "like");
-          if (oppositeKey) {
-            sessionStorage.removeItem(oppositeKey);
-          }
-        }
       }
     } catch (error) {
-      // Revert optimistic update on error
       if (reactionType === "like") {
         if (hasLiked) {
           setLikes(prev => prev + 1);
@@ -187,7 +130,6 @@ const CommentItemComponent = ({
       );
 
       if (response.success && response.data) {
-        // Handle different response structures
         let repliesData: any[] = [];
         if (Array.isArray(response.data)) {
           repliesData = response.data;
@@ -204,12 +146,12 @@ const CommentItemComponent = ({
           user:reply.user,
           text: reply.text,
           timestamp: reply.timestamp,
-          likes: 0,
-          dislikes: 0,
-          reply_count: 0,
+          likes: reply.likes || 0,
+          dis_likes: reply.dis_likes || 0,
+          reply_count: reply.reply_count || 0,
           is_replay: true,
           parent_id: comment.id,
-          has_user_liked: false,
+          has_user_liked: true,
         }));
 
         setReplies(transformedReplies);
@@ -257,8 +199,8 @@ const CommentItemComponent = ({
           user:response?.data?.user,
           text: response.data.text,
           timestamp: response.data.timestamp,
-          likes: 0,
-          dislikes: 0,
+          likes:  0,
+          dis_likes: 0,
           reply_count: 0,
           is_replay: true,
           parent_id: comment.id,
@@ -269,7 +211,6 @@ const CommentItemComponent = ({
         setReplyCount(prev => Math.max(0, prev + 1));
         setReplyContent("");
         
-        // Keep the reply form open and show replies section
         if (!showReplies) {
           setShowReplies(true);
         }
@@ -318,7 +259,7 @@ const CommentItemComponent = ({
             {comment.user?.name}
           </span>
           <span className="text-xs text-muted-foreground">
-            {formatTime(comment.timestamp)}
+            {formatCommentTime(comment.timestamp)}
           </span>
         </div>
         

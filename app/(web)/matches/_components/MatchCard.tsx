@@ -1,45 +1,32 @@
 "use client";
 
 import { useMemo } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, Clock, TrendingUp, Users, Trophy } from "lucide-react";
-
+import { CalendarDays, Clock, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MatchCardVoteBarSkeleton } from "@/components/skeletons";
-
 import { formatCombinedMatchDateTimeForUser } from "@/lib/timezoneUtils";
 import {
   getMatchDisplayStatus,
   getStatusBadgeVariant,
 } from "@/lib/matchStatusUtils";
-
-import { MatchT } from "@/types/match.type";
+import { MatchT, MatchVoteT } from "@/types/match.type";
 import { getMatchVoteCounts } from "@/api/match.api";
-
-type VoteDataT = {
-  home_votes: number;
-  draw_votes: number;
-  away_votes: number;
-  total_votes: number;
-};
+import TeamBlock from "./TeamBlock";
+import InfoPill from "./InfoPill";
 
 interface MatchCardProps {
   match: MatchT;
 }
 
-const fallbackLogo = "/placeholder.svg";
-
 export function MatchCard({ match }: MatchCardProps) {
   const showDraw = match.allow_draw !== false;
-
   const { date, time } = formatCombinedMatchDateTimeForUser(match.kickoff);
-
   const displayStatus = useMemo(() => getMatchDisplayStatus(match), [match]);
 
-  const { data: voteData, isLoading } = useQuery<VoteDataT | null>({
+  const { data: voteData, isLoading } = useQuery<MatchVoteT | null>({
     queryKey: ["match-votes-countss", match.id],
     queryFn: async () => {
       const res = await getMatchVoteCounts(match.id);
@@ -109,24 +96,18 @@ export function MatchCard({ match }: MatchCardProps) {
               />
 
               <div className="flex flex-col items-center">
-                {displayStatus === "finished" ? (
-                  <span className="text-xl font-bold text-muted-foreground">
-                    FT
-                  </span>
-                ) : (
-                  <>
-                    <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <span className="text-base font-bold text-primary">
-                        VS
-                      </span>
-                    </div>
-                    {showDraw && (
-                      <Badge variant="outline" className="px-1 py-0 text-xs">
-                        D {percentages.draw}%
-                      </Badge>
-                    )}
-                  </>
-                )}
+                <>
+                  <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-base font-bold text-primary">
+                      {displayStatus === "finished" ? "FT" : "VS"}
+                    </span>
+                  </div>
+                  {showDraw && (
+                    <Badge variant="outline" className="px-1 py-0 text-xs">
+                      D {percentages.draw}%
+                    </Badge>
+                  )}
+                </>
               </div>
 
               <TeamBlock
@@ -141,7 +122,10 @@ export function MatchCard({ match }: MatchCardProps) {
             </div>
 
             <div className="mb-3 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-              <InfoPill icon={<CalendarDays className="h-3 w-3" />} text={date} />
+              <InfoPill
+                icon={<CalendarDays className="h-3 w-3" />}
+                text={date}
+              />
               <InfoPill icon={<Clock className="h-3 w-3" />} text={time} />
             </div>
 
@@ -152,7 +136,6 @@ export function MatchCard({ match }: MatchCardProps) {
                 <>
                   <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                     <span>{percentages.home}%</span>
-                    {/* <span>{percentages.draw}%</span> */}
                     <span>{percentages.away}%</span>
                   </div>
 
@@ -186,63 +169,5 @@ export function MatchCard({ match }: MatchCardProps) {
         </CardContent>
       </Card>
     </Link>
-  );
-}
-
-function TeamBlock({
-  team,
-  score,
-  isWinner,
-  isFav,
-}: {
-  team: MatchT["home_team"];
-  score?: number;
-  isWinner: boolean;
-  isFav: boolean;
-}) {
-  return (
-    <div className="flex flex-col items-center">
-      <div className="relative mb-2 h-16 w-16">
-        <div className="absolute inset-0 rounded-full bg-primary/10 blur-sm opacity-50" />
-        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full border bg-card">
-          <Image
-            src={team.logo_url || fallbackLogo}
-            alt={team.name}
-            fill
-            className="object-contain p-1"
-            onError={(e) => ((e.target as HTMLImageElement).src = fallbackLogo)}
-          />
-        </div>
-
-        {isFav && (
-          <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-            <TrendingUp className="h-2.5 w-2.5 text-primary-foreground" />
-          </div>
-        )}
-
-        {isWinner && (
-          <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-            <Trophy className="h-2.5 w-2.5 text-white" />
-          </div>
-        )}
-      </div>
-
-      <h3 className="w-full truncate text-center text-sm font-bold">
-        {team.short_code}
-      </h3>
-
-      {score !== undefined && (
-        <span className="mt-1 text-lg font-bold text-green-600">{score}</span>
-      )}
-    </div>
-  );
-}
-
-function InfoPill({ icon, text }: { icon: React.ReactNode; text: string }) {
-  return (
-    <div className="flex items-center gap-1 rounded-full bg-card/50 px-2 py-1">
-      {icon}
-      <span>{text}</span>
-    </div>
   );
 }
