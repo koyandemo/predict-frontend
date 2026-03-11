@@ -29,7 +29,7 @@ export interface ApiMatchT {
   league_id: number;
   home_team_id: number;
   away_team_id: number;
-  match_date: string; // ISO 8601 format with timezone
+  match_date: string; 
   match_time: string;
   venue: string;
   status: string;
@@ -37,7 +37,7 @@ export interface ApiMatchT {
   home_score?: number;
   away_score?: number;
   allow_draw: boolean;
-  match_timezone: string; // Timezone identifier
+  match_timezone: string; 
   big_match?: boolean;
   derby?: boolean;
   match_type?: string;

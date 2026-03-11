@@ -20,9 +20,6 @@ function useScorePredictions(matchId: number) {
 
       if (!res.success || !res.data) return [];
 
-      // return res.data.predictions.sort(
-      //   (a: any, b: any) => b.vote_count - a.vote_count
-      // );
       return res.data.predictions;
     },
     enabled: !!matchId,
