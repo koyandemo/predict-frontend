@@ -1,16 +1,19 @@
 export enum UserEnumT {
-    USER = "user",
-    ADMIN = "admin",
-    SEED = "seed",
-  }
-  
-  export interface UserT {
-    user_id: number;
-    name: string;
-    email: string;
-    avatar_url?: string;
-    favorite_team_id?: number;
-    avatar_bg_color?: string;
-    type: UserEnumT;
-  }
-  
+  USER = "USER",
+  ADMIN = "ADMIN",
+  SEED = "SEED",
+}
+
+export interface UserT {
+  id: number;
+  name: string;
+  email: string;
+  provider: "email" | "google" | string;
+  password?: string;
+  role: "ADMIN" | "USER";
+  avatar_url?: string | "";
+  avatar_bg_color?: string | "";
+  created_at: Date;
+  updated_at: Date;
+  team_id: number;
+}

@@ -14,6 +14,7 @@ import { ErrorDisplay } from "../../../../components/ErrorDisplay";
 import { LeagueFilter } from "./LeagueFilter";
 import { StatusFilter } from "./StatusFilter";
 import MatchListFilterCard from "./MatchListFilterCard";
+import { useSession } from "next-auth/react";
 
 const buildFilters = (league: string | null, status: string | null) => {
   const filters: Record<string, string | number> = {};
@@ -30,6 +31,7 @@ const buildFilters = (league: string | null, status: string | null) => {
 };
 
 export function MatchesList() {
+  const { data: session, status } = useSession();
   const [matches, setMatches] = useState<MatchT[]>([]);
   const [leagues, setLeagues] = useState<LeagueT[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
@@ -38,6 +40,7 @@ export function MatchesList() {
   const [loadingMatches, setLoadingMatches] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  console.log(session, status);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setSelectedLeague(params.get("league"));
