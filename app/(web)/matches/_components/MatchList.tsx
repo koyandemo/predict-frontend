@@ -31,20 +31,18 @@ const buildFilters = (league: string | null, status: string | null) => {
 };
 
 export function MatchesList() {
-  const { data: session, status } = useSession();
   const [matches, setMatches] = useState<MatchT[]>([]);
   const [leagues, setLeagues] = useState<LeagueT[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>("scheduled");
   const [loadingLeagues, setLoadingLeagues] = useState(true);
   const [loadingMatches, setLoadingMatches] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(session, status);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setSelectedLeague(params.get("league"));
-    setSelectedStatus(params.get("status"));
+    setSelectedStatus(params.get("status") || "scheduled");
   }, []);
 
   useEffect(() => {
@@ -127,53 +125,53 @@ export function MatchesList() {
   }
 
   return (
-    <div className="space-y-8">
-      {loadingLeagues ? (
-        <FilterSkeleton />
-      ) : (
-        <div className="space-y-4">
-          <MatchListFilterCard title="Filter by League">
-            <LeagueFilter
-              leagues={leagues}
-              selectedLeague={selectedLeague}
-              onSelectLeague={setSelectedLeague}
-            />
-          </MatchListFilterCard>
-
-          <MatchListFilterCard title="Filter by Status">
-            <StatusFilter
-              selectedStatus={selectedStatus}
-              onSelectStatus={setSelectedStatus}
-            />
-          </MatchListFilterCard>
-        </div>
-      )}
-
-      <div>
-        {loadingMatches ? (
-          <MatchListSkeleton />
+      <div className="space-y-8">
+        {loadingLeagues ? (
+          <FilterSkeleton />
         ) : (
-          <>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">{title}</h2>
-              <span className="text-sm text-muted-foreground">
-                {matches.length} matches
-              </span>
-            </div>
+          <div className="space-y-4">
+            <MatchListFilterCard title="Filter by League">
+              <LeagueFilter
+                leagues={leagues}
+                selectedLeague={selectedLeague}
+                onSelectLeague={setSelectedLeague}
+              />
+            </MatchListFilterCard>
 
-            {matches.length === 0 ? (
-              <EmptyState />
-            ) : (
-              <div className="grid gap-3 md:gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {matches.map((match) => (
-                  <MatchCard key={match.id} match={match} />
-                ))}
-              </div>
-            )}
-          </>
+            <MatchListFilterCard title="Filter by Status">
+              <StatusFilter
+                selectedStatus={selectedStatus}
+                onSelectStatus={setSelectedStatus}
+              />
+            </MatchListFilterCard>
+          </div>
         )}
+
+        <div>
+          {loadingMatches ? (
+            <MatchListSkeleton />
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">{title}</h2>
+                <span className="text-sm text-muted-foreground">
+                  {matches.length} matches
+                </span>
+              </div>
+
+              {matches.length === 0 ? (
+                <EmptyState />
+              ) : (
+                <div className="grid gap-3 md:gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                  {matches.map((match) => (
+                    <MatchCard key={match.id} match={match} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
   );
 }
 

@@ -15,29 +15,29 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          provider: "google",
-        };
-      },
+      // profile(profile) {
+      //   return {
+      //     id: profile.sub,
+      //     name: profile.name,
+      //     email: profile.email,
+      //     image: profile.picture,
+      //     provider: "google",
+      //   };
+      // },
       httpOptions: { timeout: 10000 },
     }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID!,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
-      profile(profile) {
-        return {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture?.data?.url,
-          provider: "facebook",
-        };
-      },
+      // profile(profile) {
+      //   return {
+      //     id: profile.id,
+      //     name: profile.name,
+      //     email: profile.email,
+      //     image: profile.picture?.data?.url,
+      //     provider: "facebook",
+      //   };
+      // },
     }),
   ],
 
@@ -64,12 +64,15 @@ export const authOptions: NextAuthOptions = {
       return false;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, trigger, session, user }) {
+      if(trigger === "update" && session?.user) {
+        token.user = session.user;
+      }
       if (user) {
         //@ts-ignore
         token.user = user;
       }
-      return token;
+      return Promise.resolve(token);
     },
 
     async session({ session, token }) {

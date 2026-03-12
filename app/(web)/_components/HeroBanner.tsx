@@ -19,6 +19,25 @@ export function HeroBanner() {
 
   const slides = useMemo(() => generateHeroBanners(stats), [stats]);
 
+  // useEffect(() => {
+  //   console.log("25")
+  //   const fetchLeagues = async () => {
+  //     console.log("Fetching leagues...");
+  //     try{
+  //       const res = await axios.get("https://v3.football.api-sports.io/venues?search=england", {
+  //         headers:{
+  //           "x-apisports-key": "09a050219fec11185408523424da15b4"
+  //         }})
+  //         console.log(res.data)
+  //       }catch(err){
+  //         console.error(err);
+  //       }
+  //   }
+
+  //   fetchLeagues();
+  
+  // }, [])
+
   // Auto slide
   useEffect(() => {
     if (!slides.length) return;

@@ -47,18 +47,3 @@ export const registerUser = async (userData: {
   }
 };
 
-export const getUserByEmail = async (email: string): Promise<any> => {
-  try {
-    const response = await apiConfig.get(
-      `/users/by-email?email=${encodeURIComponent(email)}`
-    );
-
-    if (response.data.success && response.data.data) {
-      return response.data.data;
-    }
-
-    return null;
-  } catch (error: any) {
-    return null;
-  }
-};

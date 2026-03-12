@@ -7,11 +7,11 @@ declare module 'next-auth' {
     user: UserT;
   }
 
-  interface User extends ExtendedUser {}
+  interface User extends UserT {}
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    user: ExtendedUser;
+    user: UserT;
   }
 }

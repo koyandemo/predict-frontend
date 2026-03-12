@@ -32,22 +32,13 @@ type RegisterPayload = {
   password: string;
 };
 
-const mapSessionUser = (sessionUser: any): UserT => ({
-  user_id: sessionUser.id ?? "",
-  name: sessionUser.name ?? "",
-  email: sessionUser.email ?? "",
-  avatar_url: sessionUser.avatar_url ?? sessionUser.image ?? undefined,
-  favorite_team_id: sessionUser.favorite_team_id,
-  avatar_bg_color: sessionUser.avatar_bg_color,
-  type: (sessionUser.type as UserEnumT) ?? UserEnumT.USER,
-});
 
 const saveAuthToStorage = (user: UserT, token: string) => {
   localStorage.setItem(AUTH_STORAGE_KEYS.USER, JSON.stringify(user));
   localStorage.setItem(AUTH_STORAGE_KEYS.TOKEN, token);
   localStorage.setItem(
     AUTH_STORAGE_KEYS.USER_ID,
-    user.user_id?.toString() || ""
+    user.id?.toString() || ""
   );
 };
 
@@ -104,13 +95,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (session?.user) {
       const sUser = session.user as any;
 
-      const mappedUser = mapSessionUser(sUser);
-
-      setUser(mappedUser);
+      setUser(sUser);
 
       if (sUser.apiToken) {
         setToken(sUser.apiToken);
-        saveAuthToStorage(mappedUser, sUser.apiToken);
+        saveAuthToStorage(sUser, sUser.apiToken);
       }
     } else {
       setUser(null);

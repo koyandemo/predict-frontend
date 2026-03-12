@@ -11,19 +11,6 @@ export const registerWithProvider = async (data: {}):Promise<UserT> => {
   }
 }
 
-export const getUserProfile = async (): Promise<AuthResponseT> => {
-  try {
-    const res = await apiConfig.get(`/users/profile`);
-    return res.data;
-  } catch (e: any) {
-    return {
-      success: false,
-      message: 'Failed to fetch profile',
-      error: e.response?.data?.message || e.message,
-    };
-  }
-};
-
 export const updateUserProfile = async (data: any): Promise<AuthResponseT> => {
   try {
     const res = await apiConfig.put(`/users/profile`, data);
@@ -37,19 +24,8 @@ export const updateUserProfile = async (data: any): Promise<AuthResponseT> => {
   }
 };
 
-export const getUserByEmail = async (email: string) => {
-  try {
-    const res = await apiConfig.get(
-      `/users/by-email?email=${encodeURIComponent(email)}`
-    );
-    return res.data?.data || null;
-  } catch {
-    return null;
-  }
-};
-
 // Get user stats
-export const getUserStats = async (userId: string): Promise<AuthResponseT> => {
+export const getUserStats = async (userId: number): Promise<AuthResponseT> => {
   try {
     const response = await apiConfig.get(`/users/${userId}/stats`);
     const result: AuthResponseT = response.data;

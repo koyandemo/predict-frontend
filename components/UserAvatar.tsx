@@ -10,7 +10,6 @@ interface UserAvatarProps {
   user: UserT
   size?: AvatarSize
   className?: string
-  refreshTrigger?: number
 }
 
 const SIZE_CLASSES: Record<AvatarSize, string> = {
@@ -23,22 +22,21 @@ export default function UserAvatar({
   user,
   size = "md",
   className = "",
-  refreshTrigger,
 }: UserAvatarProps) {
-  if (user.type !== "seed" && user.avatar_url) {
+  if (user.role !== "SEED" && user.avatar_url) {
     return (
       <AvatarWrapper size={size} className={className}>
         <img
           src={user.avatar_url}
           alt={user.name ?? "User"}
           className="w-full h-full object-cover"
-          key={`${user.avatar_url}-${refreshTrigger || 0}`} // Add key to force re-render when avatar URL changes or refresh is triggered
+          key={`${user.avatar_url}`} 
         />
       </AvatarWrapper>
     )
   }
 
-  if (user.type === "seed") {
+  if (user.role === "SEED") {
     return (
       <AvatarWrapper
         size={size}

@@ -1,18 +1,17 @@
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 
 const apiConfig = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api',
-//   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor
 apiConfig.interceptors.request.use(
-  (config) => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJwcmVkaWN0YWRtaW5AZ21haWwuY29tIiwicHJvdmlkZXIiOiJlbWFpbCIsInJvbGUiOiJBRE1JTiIsImF2YXRhcl91cmwiOiIiLCJhdmF0YXJfYmdfY29sb3IiOiIiLCJ0ZWFtX2lkIjpudWxsLCJpYXQiOjE3NzI5NjUxOTYsImV4cCI6MTc3ODIzNTU5Nn0.8uRP9Cu7knBoKEO47eYzxSaHqUTr6utxvQc27V_TcGM';
-    // const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJwcmVkaWN0YWRtaW5AZ21haWwuY29tIiwicHJvdmlkZXIiOiJlbWFpbCIsInJvbGUiOiJBRE1JTiIsImF2YXRhcl91cmwiOiIiLCJhdmF0YXJfYmdfY29sb3IiOiIiLCJ0ZWFtX2lkIjpudWxsLCJpYXQiOjE3NzI5NjUxOTYsImV4cCI6MTc3ODIzNTU5Nn0.8uRP9Cu7knBoKEO47eYzxSaHqUTr6utxvQc27V_TcGM";
+  async(config) => {
+    const session = await getSession()
+    const token = session?.user?.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,7 +26,6 @@ apiConfig.interceptors.request.use(
   }
 );
 
-// Response interceptor
 apiConfig.interceptors.response.use(
   (response) => { 
     return response;

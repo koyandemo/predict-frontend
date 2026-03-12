@@ -1,4 +1,4 @@
-import { getAllLeagues, getAllMatches, isFinal, isUpcoming } from "@/api/match.api";
+import { getAllLeagues, getAllMatches, isUpcoming } from "@/api/match.api";
 import { HeroBanner } from "./_components/HeroBanner";
 import { MatchCarousel } from "./_components/MatchCarousel";
 import { LeagueT } from "@/types/league.type";
@@ -41,6 +41,7 @@ export default async function HomePage() {
   const finishedMatches = matches.filter(
     (match) => match.status === "FINISHED"
   );
+
 
   return (
     <div className="min-h-screen bg-background">
