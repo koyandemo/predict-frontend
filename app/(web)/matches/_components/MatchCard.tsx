@@ -26,6 +26,7 @@ export function MatchCard({ match }: MatchCardProps) {
   const { date, time } = formatCombinedMatchDateTimeForUser(match.kickoff);
   const displayStatus = useMemo(() => getMatchDisplayStatus(match), [match]);
 
+
   const { data: voteData, isLoading } = useQuery<MatchVoteT | null>({
     queryKey: ["match-votes-countss", match.id],
     queryFn: async () => {

@@ -4,13 +4,38 @@ import { AlertCircle, Calendar, Clock, Play, Trophy } from "lucide-react";
 import { MatchT } from "@/types/match.type";
 import { KICKOFF_SOON_MINUTES, MATCH_DURATION_MINUTES, MatchDisplayStatusT, MatchStatusConfigT } from "./utils";
 
+// export function getMatchDisplayStatus(match: MatchT): MatchDisplayStatusT {
+//   if (match.status === "FINISHED") return "finished";
+//   if (match.status === "LIVE") return "live";
+//   if (match.status === "POSTPONED") return "postponed";
+
+//   const kickoffLocal = new Date(match.kickoff);
+//   const kickoffUtc = convertTimezoneToUtc(kickoffLocal, match.timezone);
+
+//   const now = new Date();
+//   const matchEnd = addMinutes(kickoffUtc, MATCH_DURATION_MINUTES);
+//   const kickoffSoonThreshold = addMinutes(now, KICKOFF_SOON_MINUTES);
+
+  
+//   if (isBefore(now, kickoffUtc)) {
+//     if (isBefore(kickoffUtc, kickoffSoonThreshold)) return "kickOffSoon";
+//     return "upcoming";
+//   }
+
+//   if (isAfter(now, kickoffUtc) && isBefore(now, matchEnd)) {
+//     console.log("26")
+//     return "live";
+//   }
+
+//   return "finished";
+// }
+
 export function getMatchDisplayStatus(match: MatchT): MatchDisplayStatusT {
   if (match.status === "FINISHED") return "finished";
   if (match.status === "LIVE") return "live";
   if (match.status === "POSTPONED") return "postponed";
 
-  const kickoffLocal = new Date(`${match.kickoff}`);
-  const kickoffUtc = convertTimezoneToUtc(kickoffLocal, match.timezone);
+  const kickoffUtc = new Date(match.kickoff); // already UTC
 
   const now = new Date();
   const matchEnd = addMinutes(kickoffUtc, MATCH_DURATION_MINUTES);
