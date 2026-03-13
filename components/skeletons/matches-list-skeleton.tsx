@@ -15,7 +15,7 @@ export function MatchesListSkeleton() {
       </div>
 
       {/* Status Filter Skeleton */}
-      <div className="bg-card/50 rounded-2xl p-4 border border-border">
+      {/* <div className="bg-card/50 rounded-2xl p-4 border border-border">
         <Skeleton className="h-4 w-32 mb-3" />
         <div className="flex flex-wrap gap-2">
           <Skeleton className="h-8 w-24 rounded-full" />
@@ -24,6 +24,10 @@ export function MatchesListSkeleton() {
           <Skeleton className="h-8 w-20 rounded-full" />
           <Skeleton className="h-8 w-24 rounded-full" />
         </div>
+      </div> */}
+      <div className="flex justify-end gap-2 items-end mt-10">
+        <Skeleton className="h-7 w-20" />
+        <Skeleton className="h-7 w-20" />
       </div>
 
       {/* Matches Grid Skeleton */}
@@ -39,7 +43,7 @@ export function MatchesListSkeleton() {
         
         {/* Match Cards */}
         <div className="grid mt-5 gap-3 md:gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-card rounded-xl border border-border p-4">
               <div className="flex items-center justify-between mb-4">
                 <Skeleton className="h-4 w-24" />

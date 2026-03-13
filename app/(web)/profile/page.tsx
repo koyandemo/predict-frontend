@@ -397,7 +397,7 @@ export default function ProfilePage() {
                           <img
                             src={team.logo_url}
                             alt={team.name}
-                            className="w-16 h-16 rounded-full object-cover mb-3"
+                            className="w-16 h-16 rounded-full object-contain mb-3"
                           />
                           <h3 className="font-medium">{team.name}</h3>
                           <p className="text-sm text-muted-foreground mt-1">

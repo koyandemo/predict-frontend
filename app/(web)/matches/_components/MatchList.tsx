@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   MatchesListSkeleton,
   FilterSkeleton,
@@ -12,11 +13,27 @@ import { getAllLeagues, getAllMatches } from "@/api/match.api";
 import { MatchCard } from "./MatchCard";
 import { ErrorDisplay } from "../../../../components/ErrorDisplay";
 import { LeagueFilter } from "./LeagueFilter";
-import { StatusFilter } from "./StatusFilter";
 import MatchListFilterCard from "./MatchListFilterCard";
-import { useSession } from "next-auth/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { generateGameWeeks } from "@/lib/utils";
 
-const buildFilters = (league: string | null, status: string | null) => {
+type FilterData = {
+  league: string | null;
+  status: string;
+  gameWeek: string;
+};
+
+const buildFilters = (
+  league: string | null,
+  status: string | null,
+  gameWeek: string | null
+) => {
   const filters: Record<string, string | number> = {};
 
   if (league && league !== "all") {
@@ -27,151 +44,206 @@ const buildFilters = (league: string | null, status: string | null) => {
     filters.status = status;
   }
 
+  if (gameWeek && gameWeek !== "all") {
+    filters.gameweek_id = gameWeek;
+  }
+
   return Object.keys(filters).length ? filters : undefined;
 };
 
 export function MatchesList() {
-  const [matches, setMatches] = useState<MatchT[]>([]);
-  const [leagues, setLeagues] = useState<LeagueT[]>([]);
-  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>("scheduled");
-  const [loadingLeagues, setLoadingLeagues] = useState(true);
-  const [loadingMatches, setLoadingMatches] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [filterData, setFilterData] = useState<FilterData>({
+    league: null,
+    status: "scheduled",
+    gameWeek: "all",
+  });
+  const GAME_WEEKS = generateGameWeeks(26);
 
+  // Initialize filters from URL params
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setSelectedLeague(params.get("league"));
-    setSelectedStatus(params.get("status") || "scheduled");
+    setFilterData({
+      league: params.get("league"),
+      status: params.get("status") || "scheduled",
+      gameWeek: params.get("gameWeek") || "30",
+    });
   }, []);
 
-  useEffect(() => {
-    const fetchLeagues = async () => {
-      setLoadingLeagues(true);
-      try {
-        const res = await getAllLeagues();
-        if (res.success && res.data) {
-          setLeagues(res.data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch leagues:", err);
-        setError("Failed to load leagues");
-      } finally {
-        setLoadingLeagues(false);
+  // Fetch leagues
+  const {
+    data: leagues = [],
+    isLoading: loadingLeagues,
+    error: leaguesError,
+  } = useQuery<LeagueT[]>({
+    queryKey: ["leagues"],
+    queryFn: async () => {
+      const res = await getAllLeagues();
+      if (!res.success || !res.data) {
+        throw new Error(res.error ?? "Failed to fetch leagues");
       }
-    };
+      return res.data;
+    },
+  });
 
-    fetchLeagues();
-  }, []);
-
+  // Auto-update gameWeek when league changes based on recommended_gameweek
   useEffect(() => {
-    const fetchMatches = async () => {
-      setLoadingMatches(true);
-      setError(null);
+    if (!filterData.league || filterData.league === "all") return;
 
-      try {
-        const filters = buildFilters(selectedLeague, selectedStatus);
-        const res = await getAllMatches(filters);
+    const league = leagues.find((l) => l.id === parseInt(filterData.league!));
+    if (league?.recommended_gameweek != null) {
+      setFilterData((prev) => ({
+        ...prev,
+        gameWeek: league.recommended_gameweek!.toString(),
+      }));
+    }
+  }, [filterData.league, leagues]);
 
-        if (!res.success || !res.data) {
-          throw new Error(res.error ?? "Failed to fetch matches");
-        }
-
-        setMatches(res.data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch matches");
-      } finally {
-        setLoadingMatches(false);
+  // Fetch matches — re-runs automatically when filterData changes
+  const {
+    data: matches = [],
+    isLoading: loadingMatches,
+    error: matchesError,
+  } = useQuery<MatchT[]>({
+    queryKey: ["matches", filterData],
+    queryFn: async () => {
+      const filters = buildFilters(
+        filterData.league,
+        filterData.status,
+        filterData.gameWeek
+      );
+      const res = await getAllMatches(filters);
+      if (!res.success || !res.data) {
+        throw new Error(res.error ?? "Failed to fetch matches");
       }
-    };
+      return res.data;
+    },
+  });
 
-    fetchMatches();
-  }, [selectedLeague, selectedStatus]);
-
+  // Sync filters to URL
   useEffect(() => {
     const url = new URL(window.location.href);
 
-    selectedLeague && selectedLeague !== "all"
-      ? url.searchParams.set("league", selectedLeague)
+    filterData.league && filterData.league !== "all"
+      ? url.searchParams.set("league", filterData.league)
       : url.searchParams.delete("league");
 
-    selectedStatus && selectedStatus !== "all"
-      ? url.searchParams.set("status", selectedStatus)
+    filterData.status && filterData.status !== "all"
+      ? url.searchParams.set("status", filterData.status)
       : url.searchParams.delete("status");
 
+    filterData.gameWeek && filterData.gameWeek !== "all"
+      ? url.searchParams.set("gameWeek", filterData.gameWeek)
+      : url.searchParams.delete("gameWeek");
+
     window.history.replaceState({}, "", url);
-  }, [selectedLeague, selectedStatus]);
+  }, [filterData]);
 
   const title = useMemo(() => {
-    if (selectedStatus && selectedStatus !== "all") {
-      return `${selectedStatus[0].toUpperCase()}${selectedStatus.slice(
-        1
-      )} Matches`;
+    if (filterData.status && filterData.status !== "all") {
+      return `${filterData.status[0].toUpperCase()}${filterData.status.slice(1)} Matches`;
     }
-    if (selectedLeague && selectedLeague !== "all") {
+    if (filterData.league && filterData.league !== "all") {
       return `${
-        leagues.find((l) => l.id === parseInt(selectedLeague))?.name ?? ""
+        leagues.find((l) => l.id === parseInt(filterData.league!))?.name ?? ""
       } Matches`;
     }
-
     return "All Matches";
-  }, [selectedLeague, selectedStatus, leagues]);
+  }, [filterData.league, filterData.status, leagues]);
 
   if (loadingLeagues) return <MatchesListSkeleton />;
 
-  if (error) {
-    return <ErrorDisplay error={error} />;
+  if (leaguesError || matchesError) {
+    return (
+      <ErrorDisplay
+        error={
+          leaguesError?.message ??
+          matchesError?.message ??
+          "Something went wrong"
+        }
+      />
+    );
   }
 
   return (
-      <div className="space-y-8">
-        {loadingLeagues ? (
-          <FilterSkeleton />
-        ) : (
-          <div className="space-y-4">
-            <MatchListFilterCard title="Filter by League">
-              <LeagueFilter
-                leagues={leagues}
-                selectedLeague={selectedLeague}
-                onSelectLeague={setSelectedLeague}
-              />
-            </MatchListFilterCard>
-
-            <MatchListFilterCard title="Filter by Status">
-              <StatusFilter
-                selectedStatus={selectedStatus}
-                onSelectStatus={setSelectedStatus}
-              />
-            </MatchListFilterCard>
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <MatchListFilterCard title="Filter by League">
+          <LeagueFilter
+            leagues={leagues}
+            selectedLeague={filterData.league}
+            onSelectLeague={(val) =>
+              setFilterData((prev) => ({ ...prev, league: val }))
+            }
+          />
+        </MatchListFilterCard>
+        <div className="flex justify-end items-end gap-2 mt-10">
+          <div>
+            <Select
+              value={filterData.status}
+              onValueChange={(val) =>
+                setFilterData((prev) => ({ ...prev, status: val }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="scheduled">Scheduled</SelectItem>
+                <SelectItem value="live">Live</SelectItem>
+                <SelectItem value="finished">Finished</SelectItem>
+                <SelectItem value="postponed">Postponed</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        )}
-
-        <div>
-          {loadingMatches ? (
-            <MatchListSkeleton />
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">{title}</h2>
-                <span className="text-sm text-muted-foreground">
-                  {matches.length} matches
-                </span>
-              </div>
-
-              {matches.length === 0 ? (
-                <EmptyState />
-              ) : (
-                <div className="grid gap-3 md:gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                  {matches.map((match) => (
-                    <MatchCard key={match.id} match={match} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+          <div>
+            <Select
+              value={filterData.gameWeek}
+              onValueChange={(val) =>
+                setFilterData((prev) => ({ ...prev, gameWeek: val }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by Game Week" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Gameweek</SelectItem>
+                {GAME_WEEKS.map((gw) => (
+                  <SelectItem key={gw} value={gw.toString()}>
+                    Gameweek {gw}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
+
+      <div>
+        {loadingMatches ? (
+          <MatchListSkeleton />
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">{title}</h2>
+              <span className="text-sm text-muted-foreground">
+                {matches.length} matches
+              </span>
+            </div>
+
+            {matches.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div className="grid gap-3 md:gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                {matches.map((match) => (
+                  <MatchCard key={match.id} match={match} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 

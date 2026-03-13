@@ -28,6 +28,7 @@ export const isBigMatch = (m: MatchT) =>
 export const getAllMatches = async (filters?: {
   league_id?: number;
   status?: string;
+  gameweek_id?: string;
 }): Promise<ApiResponse<MatchT[]>> => {
   try {
     const params = new URLSearchParams();
@@ -36,11 +37,15 @@ export const getAllMatches = async (filters?: {
     params.append("published", "true");
 
     if (filters?.league_id !== undefined) {
-      params.append("league", filters.league_id.toString());
+      params.append("league_id", filters.league_id.toString());
     }
 
     if (filters?.status) {
       params.append("status", filters.status.toUpperCase());
+    }
+
+    if (filters?.gameweek_id) {
+      params.append("gameweek_id", filters.gameweek_id);
     }
 
     const response = await apiConfig.get(`/matches?${params.toString()}`);

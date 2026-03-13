@@ -186,3 +186,11 @@ export const formatCommentTime = (timestamp: string) => {
     day: "numeric",
   });
 };
+
+export const generateGameWeeks = (startIndex: number) => {
+  const totalWeeks = 38;
+
+  const length = totalWeeks - startIndex + 1;
+
+  return Array.from({ length: length > 0 ? length : 0 }, (_, i) => startIndex + i);
+};
