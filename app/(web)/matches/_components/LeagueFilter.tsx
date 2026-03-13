@@ -74,7 +74,7 @@ function LeaguePill({ label, active, logo, onClick }: LeaguePillProps) {
           alt={label}
           width={20}
           height={20}
-          className="rounded-full object-cover"
+          className="w-[20px] h-[20px] rounded-full object-contain"
         />
       )}
       {label}

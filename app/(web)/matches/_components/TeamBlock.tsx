@@ -4,11 +4,13 @@ import Image from "next/image";
 
 function TeamBlock({
   team,
+  teamName,
   score,
   isWinner,
   isFav,
 }: {
-  team: MatchT["home_team"];
+  team: MatchT["home_team"] | MatchT["away_team"];
+  teamName: string;
   score?: number;
   isWinner: boolean;
   isFav: boolean;
@@ -22,7 +24,7 @@ function TeamBlock({
             src={team.logo_url || "/football-field.png"}
             alt={team.name}
             fill
-            className="object-cover p-1"
+            className="object-contain p-1"
             onError={(e) =>
               ((e.target as HTMLImageElement).src = "/football-field.png")
             }

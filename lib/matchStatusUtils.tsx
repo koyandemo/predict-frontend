@@ -55,6 +55,14 @@ export const MATCH_STATUS_CONFIG: Record<string, MatchStatusConfigT> = {
     badgeText: "Scheduled",
     showScores: false,
   },
+  upcoming: {
+    icon: Calendar,
+    title: "Upcoming Match",
+    subtitle: "Match scheduled to start",
+    badgeVariant: "secondary",
+    badgeText: "Scheduled",
+    showScores: false,
+  },
   live: {
     icon: Play,
     title: "Debate Match",

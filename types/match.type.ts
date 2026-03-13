@@ -15,6 +15,8 @@ export type MatchT = {
   home_score: number;
   away_score: number;
   published: boolean;
+  home_team_name:string;
+  away_team_name:string;
   home_team_id: number;
   away_team_id: number;
   league_id: number;

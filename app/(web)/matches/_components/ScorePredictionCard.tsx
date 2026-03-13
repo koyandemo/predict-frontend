@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { MatchT, ScorePredictionT } from "@/types/match.type";
 import { useAuth } from "@/context/AuthContext";
 import { getScorePredictions, voteScorePrediction } from "@/api/prediction.api";
+import { useSession } from "next-auth/react";
 
 interface ScorePredictionCardProps {
   match: MatchT;
@@ -42,7 +43,7 @@ function useVotePrediction(matchId: number) {
 }
 
 export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
-  const { user, isAuthenticated } = useAuth();
+  const {data:session} = useSession();
   const matchId = Number(match.id);
 
   const { data: predictions = [] } = useScorePredictions(matchId);
@@ -58,7 +59,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
   );
 
   const handleSelect = async (p: ScorePredictionT) => {
-    if (!isAuthenticated || !user?.user_id) {
+    if (!session?.user?.id) {
       alert("Please login to vote");
       return;
     }
@@ -109,7 +110,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
               <button
                 key={key}
                 onClick={() => handleSelect(p)}
-                disabled={!isAuthenticated || voteMutation.isPending}
+                disabled={voteMutation.isPending}
                 className={cn(
                   "relative flex items-center justify-between rounded-lg border p-3 md:p-4 transition",
                   isSelected
@@ -124,7 +125,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
 
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-muted-foreground">
-                      {match.home_team.short_code}
+                      {match.home_team_name}
                     </span>
 
                     <span
@@ -156,7 +157,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
                     </span>
 
                     <span className="text-xs text-muted-foreground">
-                      {match.away_team.short_code}
+                      {match.away_team_name}
                     </span>
                   </div>
                 </div>
@@ -179,7 +180,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
           })}
         </div>
 
-        {!isAuthenticated && (
+        {!session?.user?.id && (
           <p className="mt-4 text-center text-xs md:text-sm text-muted-foreground">
             <a href="/login" className="text-blue-500 hover:underline">
               Login

@@ -39,7 +39,7 @@ export default function VotingPanel({ match, onVoteUpdate }: Props) {
           <VoteButton
             active={userVote === "HOME"}
             disabled={isVoting}
-            label={match.home_team.short_code}
+            label={match.home_team_name}
             logo={match.home_team.logo_url}
             percent={votes.home}
             colorClass="border-emerald-500 bg-emerald-500/10"
@@ -60,7 +60,7 @@ export default function VotingPanel({ match, onVoteUpdate }: Props) {
           <VoteButton
             active={userVote === "AWAY"}
             disabled={isVoting}
-            label={match.away_team.short_code}
+            label={match.away_team_name}
             logo={match.away_team.logo_url}
             percent={votes.away}
             colorClass="border-blue-500 bg-blue-500/10"

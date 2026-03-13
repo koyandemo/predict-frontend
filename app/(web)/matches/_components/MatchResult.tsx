@@ -16,12 +16,12 @@ interface Props {
 
 export function MatchResult({ match }: Props) {
   const displayStatus = getMatchDisplayStatus(match);
-
+  console.log("Display Status:", displayStatus);
   const status =
     MATCH_STATUS_CONFIG[displayStatus as keyof typeof MATCH_STATUS_CONFIG] ??
     MATCH_STATUS_CONFIG.unknown;
 
-  const StatusIcon = status.icon;
+  const StatusIcon = status?.icon;
   const result = getMatchResultSummary(match);
 
   return (

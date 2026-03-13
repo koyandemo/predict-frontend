@@ -28,42 +28,44 @@ export default async function HomePage() {
 
   const upcomingMatches = matches.filter(isUpcoming);
 
-  const specialMatches = MATCH_GENRES.flatMap((s) =>
-    upcomingMatches.filter(s.filter)
-  );
+  const specialMatches = MATCH_GENRES.map(({ title, filter }) => ({
+    title,
+    matches: upcomingMatches.filter(filter),
+  })).filter((group) => group.matches.length > 0);
 
-  const regularMatches = upcomingMatches.filter(
-    (m) => !specialMatches.includes(m)
-  );
+  // const specialMatchIds = new Set(
+  //   specialMatches.flatMap((group) => group.matches.map((m) => m.id))
+  // );
 
-  const matchesByLeague = groupMatchesByLeague(regularMatches, leagues);
+  // const remainingMatches = upcomingMatches.filter(
+  //   (match) => !specialMatchIds.has(match.id)
+  // );
+  // const matchesByLeague = groupMatchesByLeague(remainingMatches, leagues);
+  const matchesByLeague = groupMatchesByLeague(upcomingMatches, leagues);
 
   const finishedMatches = matches.filter(
     (match) => match.status === "FINISHED"
   );
-
 
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-6 md:py-8 flex flex-col gap-10">
         <HeroBanner />
 
-        {MATCH_GENRES.map(({ title, filter }) => {
-          const data = upcomingMatches.filter(filter);
+        {specialMatches.map(({ title, matches }: any) => {
           return (
-            data.length > 0 && (
+            matches.length > 0 && (
               <div key={title}>
                 <MatchCarousel
                   title={title}
                   route="/matches/?status=finished"
                   showViewAll={false}
-                  matches={data}
+                  matches={matches}
                 />
               </div>
             )
           );
         })}
-        <hr />
 
         {/* League sections */}
         {leagues.map((league: LeagueT) => {
@@ -76,11 +78,11 @@ export default async function HomePage() {
                   route={`/matches/?status=scheduled`}
                   matches={leagueMatches}
                 />
+                
               </div>
             )
           );
         })}
-
         {/* Finished matches */}
         {finishedMatches.length > 0 && (
           <div>

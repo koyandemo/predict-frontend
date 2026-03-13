@@ -99,6 +99,7 @@ export function MatchCarousel({
           </button>
         )}
       </div>
+      <hr className="mt-10" />
     </div>
   );
 }
