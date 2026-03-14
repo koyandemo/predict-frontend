@@ -52,6 +52,7 @@ export function Header() {
   const navLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/matches", label: "Matches", icon: LayoutList },
+    { href: "/world-cup", label: "World Cup", icon: Trophy },
     // { href: "/leaderboard", label: "Leaderboard", icon: Medal },
     ...(isLoadingToken
       ? [{ href: "#", label: "Loading...", icon: null }]

@@ -19,7 +19,8 @@ function TeamBlock({
     <div className="flex flex-col items-center">
       <div className="relative mb-2 h-16 w-16">
         <div className="absolute inset-0 rounded-full bg-primary/10 blur-sm opacity-50" />
-        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full border bg-card">
+        {/* //border bg-card */}
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full">
           <Image
             src={team.logo_url || "/football-field.png"}
             alt={team.name}

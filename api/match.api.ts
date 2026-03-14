@@ -14,6 +14,10 @@ export const isUpcoming = (match: MatchT) => match.status !== "FINISHED";
 export const isFinal = (m: MatchT) => m.type === "FINAL";
 export const isSemiFinal = (m: MatchT) => m.type === "SEMIFINAL";
 export const isQuarterFinal = (m: MatchT) => m.type === "QUARTERFINAL";
+export const isRoundOf16 = (m: MatchT) => m.type === "ROUND_OF_16";
+export const isThirdPlacePlayoff = (m: MatchT) =>
+  m.type === "THIRD_PLACE_PLAYOFF";
+export const isGroupStage = (m: MatchT) => m.type === "GROUP_STAGE";
 
 export const isDerby = (m: MatchT) =>
   m.derby && !isFinal(m) && !isSemiFinal(m) && !isQuarterFinal(m);
@@ -25,10 +29,25 @@ export const isBigMatch = (m: MatchT) =>
   !isQuarterFinal(m) &&
   !m.derby;
 
+export const isKnockoutMatch = (m: MatchT) =>
+  isFinal(m) ||
+  isSemiFinal(m) ||
+  isQuarterFinal(m) ||
+  isRoundOf16(m) ||
+  isThirdPlacePlayoff(m);
+  
+
+/**
+ *
+ * GET ALL MATCHES
+ *
+ */
+
 export const getAllMatches = async (filters?: {
   league_id?: number;
   status?: string;
   gameweek_id?: string;
+  group_name?: string;
 }): Promise<ApiResponse<MatchT[]>> => {
   try {
     const params = new URLSearchParams();
@@ -44,9 +63,13 @@ export const getAllMatches = async (filters?: {
       params.append("status", filters.status.toUpperCase());
     }
 
-    if (filters?.gameweek_id) {
-      params.append("gameweek_id", filters.gameweek_id);
+    if (filters?.group_name) {
+      params.append("group_name", filters.group_name.toUpperCase());
     }
+
+    // if (filters?.gameweek_id) {
+    //   params.append("gameweek_id", filters.gameweek_id);
+    // }
 
     const response = await apiConfig.get(`/matches?${params.toString()}`);
     const result = response.data;
@@ -105,7 +128,7 @@ export const getMatchById = async (
 
 export const getAllLeagues = async () => {
   try {
-    const response = await apiConfig.get(`/leagues`);
+    const response = await apiConfig.get(`/leagues?published=${true}`);
 
     const result = response.data;
     if (!result.success) {
@@ -166,9 +189,7 @@ export const getMatchVoteCounts = async (
   matchId: number
 ): Promise<ApiResponse<ApiVoteCountT>> => {
   try {
-    const response = await apiConfig.get(
-      `/matches/${matchId}/admin-match-votes`
-    );
+    const response = await apiConfig.get(`/matches/${matchId}/match-votes`);
 
     const result = response.data;
 

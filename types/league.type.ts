@@ -8,4 +8,5 @@ export interface LeagueT {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  is_tournament?: boolean;
 }

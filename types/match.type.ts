@@ -8,10 +8,12 @@ export type MatchT = {
   venue: string;
   slug: string;
   status: "SCHEDULED" | "LIVE" | "FINISHED" | "POSTPONED";
-  type: "NORMAL" | "FINAL" | "SEMIFINAL" | "QUARTERFINAL" | "FRIENDLY";
+  type: "NORMAL" | "FINAL" | "SEMIFINAL" | "QUARTERFINAL" | "THIRD_PLACE_PLAYOFF" | "ROUND_OF_16" | "GROUP_STAGE" | "FRIENDLY";
   allow_draw: boolean;
   big_match: boolean;
   derby: boolean;
+  aggregate_home_score?: number;
+  aggregate_away_score?: number;
   home_score: number;
   away_score: number;
   published: boolean;
@@ -23,6 +25,7 @@ export type MatchT = {
   home_team: TeamT;
   away_team: TeamT;
   league: LeagueT;
+  group_name?: string;
 };
 
 export interface ApiMatchT {
@@ -91,12 +94,16 @@ export interface ApiCommentT {
 }
 
 export interface ScorePredictionT {
-  admin_votes: number;
   away_score: number;
   home_score: number;
   id: number;
   percent: number;
-  user_votes: number;
   current_user_vote: boolean;
   votes: number;
+}
+
+
+export interface MatchSectionT {
+  title: string;
+  matches: MatchT[];
 }

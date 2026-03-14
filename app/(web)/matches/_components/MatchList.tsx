@@ -22,17 +22,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { generateGameWeeks } from "@/lib/utils";
+import { FIFA_WORLD_CUP_GROUPS } from "@/lib/fifaWorldCupUtils";
 
 type FilterData = {
   league: string | null;
   status: string;
   gameWeek: string;
+  group_name:string;
 };
 
 const buildFilters = (
   league: string | null,
   status: string | null,
-  gameWeek: string | null
+  gameWeek: string | null,
+  group_name:string|null,
 ) => {
   const filters: Record<string, string | number> = {};
 
@@ -48,6 +51,10 @@ const buildFilters = (
     filters.gameweek_id = gameWeek;
   }
 
+  if(group_name && group_name !== "all"){
+    filters.group_name = group_name;
+  }
+
   return Object.keys(filters).length ? filters : undefined;
 };
 
@@ -56,16 +63,18 @@ export function MatchesList() {
     league: null,
     status: "scheduled",
     gameWeek: "all",
+    group_name:"all"
   });
-  const GAME_WEEKS = generateGameWeeks(26);
+  // const GAME_WEEKS = generateGameWeeks(1);
 
   // Initialize filters from URL params
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setFilterData({
       league: params.get("league"),
-      status: params.get("status") || "scheduled",
-      gameWeek: params.get("gameWeek") || "30",
+      status: params.get("status") || "all",
+      gameWeek: params.get("gameWeek") || "1",
+      group_name:params.get("group_name") || "all"
     });
   }, []);
 
@@ -109,7 +118,8 @@ export function MatchesList() {
       const filters = buildFilters(
         filterData.league,
         filterData.status,
-        filterData.gameWeek
+        filterData.gameWeek,
+        filterData.group_name
       );
       const res = await getAllMatches(filters);
       if (!res.success || !res.data) {
@@ -196,7 +206,31 @@ export function MatchesList() {
               </SelectContent>
             </Select>
           </div>
-          <div>
+           <div>
+            <Select
+              value={filterData.group_name}
+              onValueChange={(val) =>
+                setFilterData((prev) => ({ ...prev, group_name: val }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by Group" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Group</SelectItem>
+                {FIFA_WORLD_CUP_GROUPS.map((data) => (
+                  <SelectItem key={data} value={data}>
+                    Group {data}
+                  </SelectItem>
+                ))}
+                {/* <SelectItem value="A">Group A</SelectItem>
+                <SelectItem value="B">Group B</SelectItem>
+                <SelectItem value="C">Group C</SelectItem>
+                <SelectItem value="D">Group D</SelectItem> */}
+              </SelectContent>
+            </Select>
+          </div>
+          {/* <div>
             <Select
               value={filterData.gameWeek}
               onValueChange={(val) =>
@@ -215,7 +249,7 @@ export function MatchesList() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
       </div>
 

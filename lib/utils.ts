@@ -4,6 +4,8 @@ import {
   isFinal,
   isQuarterFinal,
   isSemiFinal,
+  isRoundOf16,
+  isThirdPlacePlayoff,
 } from "@/api/match.api";
 import { MatchT } from "@/types/match.type";
 import { clsx, type ClassValue } from "clsx";
@@ -56,6 +58,8 @@ export const MATCH_GENRES = [
   { title: "Final Matches", filter: isFinal },
   { title: "Semi-Final Matches", filter: isSemiFinal },
   { title: "Quarter-Final Matches", filter: isQuarterFinal },
+  { title: "Round of 16", filter: isRoundOf16 },
+  { title: "Third Place Playoff", filter: isThirdPlacePlayoff },
   { title: "Derby Matches", filter: isDerby },
   { title: "Big Matches", filter: isBigMatch },
 ];
@@ -188,7 +192,7 @@ export const formatCommentTime = (timestamp: string) => {
 };
 
 export const generateGameWeeks = (startIndex: number) => {
-  const totalWeeks = 38;
+  const totalWeeks = 3;
 
   const length = totalWeeks - startIndex + 1;
 

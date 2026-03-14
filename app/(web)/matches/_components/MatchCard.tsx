@@ -22,10 +22,16 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ match }: MatchCardProps) {
-  const showDraw = match.allow_draw !== false;
+  const isKnockout =
+    match.type === "FINAL" ||
+    match.type === "SEMIFINAL" ||
+    match.type === "QUARTERFINAL" ||
+    match.type === "ROUND_OF_16" ||
+    match.type === "THIRD_PLACE_PLAYOFF";
+
+  const showDraw = match.allow_draw !== false && !isKnockout;
   const { date, time } = formatCombinedMatchDateTimeForUser(match.kickoff);
   const displayStatus = useMemo(() => getMatchDisplayStatus(match), [match]);
-
 
   const { data: voteData, isLoading } = useQuery<MatchVoteT | null>({
     queryKey: ["match-votes-countss", match.id],
@@ -62,9 +68,21 @@ export function MatchCard({ match }: MatchCardProps) {
       <Card className="group p-0 h-full cursor-pointer overflow-hidden bg-card/80 backdrop-blur-sm shadow-md transition-all hover:border-primary/50 hover:shadow-lg">
         <CardContent className="flex h-full flex-col p-0">
           <div className="flex items-center justify-between border-b border-border bg-linear-to-r from-primary/10 to-secondary/10 p-3">
-            <Badge variant="secondary" className="text-xs font-medium">
-              {match.league.name}
-            </Badge>
+            <div className="flex gap-2 flex-wrap">
+              <Badge variant="secondary" className="text-xs font-medium">
+                {match.league.name}
+              </Badge>
+              {match.group_name && (
+                <Badge variant="outline" className="text-xs font-medium">
+                  Group {match.group_name}
+                </Badge>
+              )}
+              {match.type === "GROUP_STAGE" && (
+                <Badge variant="outline" className="text-xs font-medium">
+                  Group Stage
+                </Badge>
+              )}
+            </div>
 
             <Badge
               variant={getStatusBadgeVariant(displayStatus)}
