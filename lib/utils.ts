@@ -16,6 +16,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const FIFA_CLUB_WORLD_CUP_LEAGUE_ID = 16;
+export const MATCH_CURRENT_TYPE="GROUP_STAGE"
+
 export type MatchDisplayStatusT =
   | "scheduled"
   | "live"
@@ -147,30 +150,6 @@ export const groupMatchesByLeague = (
 
   return map;
 };
-
-// export const groupMatchesByLeague = (
-//   groups: { title: string; matches: MatchT[] }[],
-//   leagues: { id: string }[]
-// ): Record<string, MatchT[]> => {
-//   const map: Record<string, MatchT[]> = {};
-
-//   // initialize map with league ids
-//   leagues.forEach((league) => {
-//     map[league.id] = [];
-//   });
-
-//   // flatten grouped matches
-//   groups.forEach((group) => {
-//     group.matches.forEach((match) => {
-//       if (map[match.league_id]) {
-//         map[match.league_id].push(match);
-//       }
-//     });
-//   });
-
-//   return map;
-// };
-
 
 export const formatCommentTime = (timestamp: string) => {
   const date = new Date(timestamp);

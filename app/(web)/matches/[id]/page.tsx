@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { notFound } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { MatchDetailSkeleton } from "@/components/skeletons";
-import type { MatchT } from "@/types/match.type";
 import { getMatchById } from "@/api/match.api";
 import CommentsSection from "../_components/CommentsSection";
 import { MatchHeader } from "../_components/MatchHeader";
@@ -18,31 +18,22 @@ interface MatchPageProps {
 }
 
 export default function MatchPage({ params }: MatchPageProps) {
-  
   const { id } = React.use(params);
-  const [match, setMatch] = useState<MatchT | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  const fetchMatch = useCallback(async () => {
-    try {
+  const {
+    data: match,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["match", id],
+    queryFn: async () => {
       const res = await getMatchById(id);
-      if (!res.success || !res.data) {
-        notFound();
-      }
-      setMatch(res.data);
-    } catch (error) {
-      console.error(error);
-      notFound();
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
+      if (!res.success || !res.data) notFound();
+      return res.data;
+    },
+  });
 
-  useEffect(() => {
-    fetchMatch();
-  }, [fetchMatch]);
-
-  if (loading || !match) {
+  if (isLoading || !match) {
     return <MatchDetailSkeleton />;
   }
 
@@ -52,7 +43,7 @@ export default function MatchPage({ params }: MatchPageProps) {
 
       <main className="container mx-auto px-3 md:px-4 py-6 md:py-8">
         <div className="grid gap-6 md:gap-8 max-w-4xl mx-auto">
-          <VotingPanel match={match} onVoteUpdate={fetchMatch} />
+          <VotingPanel match={match} onVoteUpdate={refetch} />
 
           <MatchResult match={match} />
 

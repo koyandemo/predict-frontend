@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { MatchT, ScorePredictionT } from "@/types/match.type";
 import { useAuth } from "@/context/AuthContext";
 import { getScorePredictions, voteScorePrediction } from "@/api/prediction.api";
-import { useSession } from "next-auth/react";
 
 interface ScorePredictionCardProps {
   match: MatchT;
@@ -43,15 +42,13 @@ function useVotePrediction(matchId: number) {
 }
 
 export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
-  const {data:session} = useSession();
+  const { isAuthenticated } = useAuth();
   const matchId = Number(match.id);
 
   const { data: predictions = [] } = useScorePredictions(matchId);
   const voteMutation = useVotePrediction(matchId);
 
-  const [selectedPrediction, setSelectedPrediction] = useState<string | null>(
-    
-  );
+  const [selectedPrediction, setSelectedPrediction] = useState<string | null>();
 
   const totalVotes = predictions.reduce(
     (sum: number, p: any) => sum + p.votes,
@@ -59,12 +56,12 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
   );
 
   const handleSelect = async (p: ScorePredictionT) => {
-    if (!session?.user?.id) {
+    if (!isAuthenticated) {
       alert("Please login to vote");
       return;
     }
 
-    if (["FINISHED","POSTPONED"].includes(match.status)) {
+    if (["FINISHED", "POSTPONED"].includes(match.status)) {
       alert("Voting is closed for this match");
       return;
     }
@@ -100,7 +97,8 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
         <div className="grid gap-3">
           {predictions.map((p: ScorePredictionT, index: number) => {
             const key = `${p.home_score}-${p.away_score}`;
-            const isSelected = selectedPrediction === key || p.current_user_vote;
+            const isSelected =
+              selectedPrediction === key || p.current_user_vote;
 
             const isDraw = p.home_score === p.away_score;
             const isHomeWin = p.home_score > p.away_score;
@@ -180,7 +178,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
           })}
         </div>
 
-        {!session?.user?.id && (
+        {!isAuthenticated && (
           <p className="mt-4 text-center text-xs md:text-sm text-muted-foreground">
             <a href="/login" className="text-blue-500 hover:underline">
               Login

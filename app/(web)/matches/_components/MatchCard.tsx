@@ -12,10 +12,11 @@ import {
   getMatchDisplayStatus,
   getStatusBadgeVariant,
 } from "@/lib/matchStatusUtils";
-import { MatchT, MatchVoteT } from "@/types/match.type";
-import { getMatchVoteCounts } from "@/api/match.api";
+import { MatchT} from "@/types/match.type";
 import TeamBlock from "./TeamBlock";
 import InfoPill from "./InfoPill";
+import { getMatchVotes } from "@/api/matchVote.api";
+import { MatchVoteT } from "@/types/matchVote.type";
 
 interface MatchCardProps {
   match: MatchT;
@@ -36,7 +37,7 @@ export function MatchCard({ match }: MatchCardProps) {
   const { data: voteData, isLoading } = useQuery<MatchVoteT | null>({
     queryKey: ["match-votes-countss", match.id],
     queryFn: async () => {
-      const res = await getMatchVoteCounts(match.id);
+      const res = await getMatchVotes(match.id);
       if (!res.success || !res.data) return null;
       return res.data;
     },
@@ -77,11 +78,11 @@ export function MatchCard({ match }: MatchCardProps) {
                   Group {match.group_name}
                 </Badge>
               )}
-              {match.type === "GROUP_STAGE" && (
+              {/* {match.type === "GROUP_STAGE" && (
                 <Badge variant="outline" className="text-xs font-medium">
                   Group Stage
                 </Badge>
-              )}
+              )} */}
             </div>
 
             <Badge

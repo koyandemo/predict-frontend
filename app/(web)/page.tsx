@@ -1,64 +1,54 @@
-import { getAllLeagues, getAllMatches, isUpcoming, isKnockoutMatch } from "@/api/match.api";
-import { HeroBanner } from "./_components/HeroBanner";
+import { getAllMatches, isUpcoming } from "@/api/match.api";
 import { MatchCarousel } from "./_components/MatchCarousel";
-import { LeagueT } from "@/types/league.type";
-import { MatchT } from "@/types/match.type";
-import { buildGroupSections, buildKnockoutSections, KNOCKOUT_TYPES } from "@/lib/fifaWorldCupUtils";
+import {
+  buildGroupSections,
+  buildKnockoutSections,
+} from "@/lib/fifaWorldCupUtils";
 import WorldCupHeroBanner from "./_components/WorldCupHeroBanner";
-
-
+import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID } from "@/lib/utils";
 
 export default async function HomePage() {
-  const [matchesRes, leaguesRes] = await Promise.all([
-    getAllMatches({ league_id: 16 }),
-    getAllLeagues(),
-  ]);
+  const matchesRes = await getAllMatches({
+    league_id: String(FIFA_CLUB_WORLD_CUP_LEAGUE_ID),
+    page: 1,
+    type: "GROUP_STAGE",
+    limit: 200,
+  });
 
-  if (!matchesRes.success || !leaguesRes.success) {
-    return <ErrorState />;
+  if (!matchesRes.success) {
+    return (
+      <ErrorState message="Failed to load matches. Please try again later." />
+    );
   }
 
-  const matches  = matchesRes.data  ?? [];
-  const leagues  = leaguesRes.data  ?? [];
+  const matches = matchesRes.data ?? [];
 
-  const worldCupLeague = leagues.find(
-    (l: LeagueT) => l.is_tournament || l.slug === "fifa-world-cup-2026"
-  );
+  if (matches.length === 0) {
+    return (
+      <ErrorState message="No matches found for the FIFA Club World Cup. Please check back later." />
+    );
+  }
 
-  const upcomingWorldCupMatches = worldCupLeague
-    ? matches.filter((m) => m.league_id === worldCupLeague.id && isUpcoming(m))
-    : [];
+  const upComingMatches = matches.filter(isUpcoming);
 
-  const groupSections   = buildGroupSections(upcomingWorldCupMatches);
-  const knockoutSections = buildKnockoutSections(upcomingWorldCupMatches);
-  const finishedMatches = matches.filter((m) => m.status === "FINISHED");
-
-  const hasWorldCupContent =
-    worldCupLeague != null && upcomingWorldCupMatches.length > 0;
-
+  const groupMatchSectionData = buildGroupSections(upComingMatches);
+  const finishedMatchData = matches.filter((m) => m.status === "FINISHED");
+  const knockoutMatchSectionData = buildKnockoutSections(upComingMatches);
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-6 md:py-8 flex flex-col gap-10">
-        {/* <HeroBanner /> */}
         <WorldCupHeroBanner />
 
-        {hasWorldCupContent && (
+        {groupMatchSectionData.length > 0 && (
           <>
-            {groupSections.map(({ title, matches: sectionMatches }) => (
+            {groupMatchSectionData.map(({ title, matches: sectionMatches }) => (
               <MatchCarousel
                 key={title}
                 title={title}
-                route={`/matches/?status=scheduled&group=${title.replace("Group ", "")}`}
-                matches={sectionMatches}
-                showViewAll={false}
-              />
-            ))}
-
-            {knockoutSections.map(({ title, matches: sectionMatches }) => (
-              <MatchCarousel
-                key={title}
-                title={title}
-                route={`/matches/?status=scheduled&type=${title.toUpperCase().replace(" ", "_")}`}
+                route={`/matches/?status=scheduled&group=${title.replace(
+                  "Group",
+                  ""
+                )}`}
                 matches={sectionMatches}
                 showViewAll={false}
               />
@@ -66,11 +56,29 @@ export default async function HomePage() {
           </>
         )}
 
-        {finishedMatches.length > 0 && (
+        {knockoutMatchSectionData.length > 0 && (
+          <>
+            {knockoutMatchSectionData.map(
+              ({ title, matches: sectionMatches }) => (
+                <MatchCarousel
+                  key={title}
+                  title={title}
+                  route={`/matches/?status=scheduled&type=${title
+                    .toUpperCase()
+                    .replace(" ", "_")}`}
+                  matches={sectionMatches}
+                  showViewAll={false}
+                />
+              )
+            )}
+          </>
+        )}
+
+        {finishedMatchData.length > 0 && (
           <MatchCarousel
             title="Finished Matches"
             route="/matches/?status=finished"
-            matches={finishedMatches}
+            matches={finishedMatchData}
           />
         )}
       </main>
@@ -78,15 +86,12 @@ export default async function HomePage() {
   );
 }
 
-function ErrorState() {
+function ErrorState({ message }: { message: string }) {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
-        {/* <HeroBanner /> */}
         <WorldCupHeroBanner />
-        <p className="text-center py-12 text-muted-foreground">
-          Failed to load matches. Please try again later.
-        </p>
+        <p className="text-center py-12 text-muted-foreground">{message}</p>
       </main>
     </div>
   );

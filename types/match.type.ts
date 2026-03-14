@@ -8,7 +8,15 @@ export type MatchT = {
   venue: string;
   slug: string;
   status: "SCHEDULED" | "LIVE" | "FINISHED" | "POSTPONED";
-  type: "NORMAL" | "FINAL" | "SEMIFINAL" | "QUARTERFINAL" | "THIRD_PLACE_PLAYOFF" | "ROUND_OF_16" | "GROUP_STAGE" | "FRIENDLY";
+  type:
+    | "NORMAL"
+    | "FINAL"
+    | "SEMIFINAL"
+    | "QUARTERFINAL"
+    | "THIRD_PLACE_PLAYOFF"
+    | "ROUND_OF_16"
+    | "GROUP_STAGE"
+    | "FRIENDLY";
   allow_draw: boolean;
   big_match: boolean;
   derby: boolean;
@@ -17,8 +25,8 @@ export type MatchT = {
   home_score: number;
   away_score: number;
   published: boolean;
-  home_team_name:string;
-  away_team_name:string;
+  home_team_name: string;
+  away_team_name: string;
   home_team_id: number;
   away_team_id: number;
   league_id: number;
@@ -33,7 +41,7 @@ export interface ApiMatchT {
   league_id: number;
   home_team_id: number;
   away_team_id: number;
-  match_date: string; 
+  match_date: string;
   match_time: string;
   venue: string;
   status: string;
@@ -41,7 +49,7 @@ export interface ApiMatchT {
   home_score?: number;
   away_score?: number;
   allow_draw: boolean;
-  match_timezone: string; 
+  match_timezone: string;
   big_match?: boolean;
   derby?: boolean;
   match_type?: string;
@@ -61,25 +69,20 @@ export interface ApiMatchT {
   };
 }
 
-export type MatchVoteT = {
-  home_votes: number;
-  draw_votes: number;
-  away_votes: number;
-  total_votes: number;
+export type MatchFilterT = {
+  league_id?: string | null;
+  season_id?: string | null;
+  gameweek_id?: string|null;
+  status?: "SCHEDULED" | "LIVE" | "FINISHED" | "POSTPONED" | "all";
+  type?: string;
+  group_name?: string|null;
+  published?: boolean;
+  from?: string;
+  to?: string;
+  search?: string;
+  page: number;
+  limit: number;
 };
-
-export interface ApiVoteCountT {
-  vote_id: number;
-  match_id: number;
-  home_votes: number;
-  draw_votes: number;
-  away_votes: number;
-  total_votes: number;
-  home_percentage?: number;
-  draw_percentage?: number;
-  away_percentage?: number;
-  current_user_vote?: "HOME" | "DRAW" | "AWAY" | "";
-}
 
 export interface ApiCommentT {
   comment_id: number;
@@ -101,7 +104,6 @@ export interface ScorePredictionT {
   current_user_vote: boolean;
   votes: number;
 }
-
 
 export interface MatchSectionT {
   title: string;

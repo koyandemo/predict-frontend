@@ -1,5 +1,7 @@
-import { LeagueT } from "@/types/league.type";
-import { ApiCommentT, ApiVoteCountT, MatchT } from "@/types/match.type";
+import {
+  MatchFilterT,
+  MatchT,
+} from "@/types/match.type";
 import apiConfig from "./apiConfig";
 import { TeamT } from "@/types/team.type";
 
@@ -35,43 +37,15 @@ export const isKnockoutMatch = (m: MatchT) =>
   isQuarterFinal(m) ||
   isRoundOf16(m) ||
   isThirdPlacePlayoff(m);
-  
 
-/**
- *
- * GET ALL MATCHES
- *
- */
 
-export const getAllMatches = async (filters?: {
-  league_id?: number;
-  status?: string;
-  gameweek_id?: string;
-  group_name?: string;
-}): Promise<ApiResponse<MatchT[]>> => {
+export const getAllMatches = async (
+  payload?: MatchFilterT
+): Promise<ApiResponse<MatchT[]>> => {
   try {
-    const params = new URLSearchParams();
-
-    // default filter
-    params.append("published", "true");
-
-    if (filters?.league_id !== undefined) {
-      params.append("league_id", filters.league_id.toString());
-    }
-
-    if (filters?.status) {
-      params.append("status", filters.status.toUpperCase());
-    }
-
-    if (filters?.group_name) {
-      params.append("group_name", filters.group_name.toUpperCase());
-    }
-
-    // if (filters?.gameweek_id) {
-    //   params.append("gameweek_id", filters.gameweek_id);
-    // }
-
-    const response = await apiConfig.get(`/matches?${params.toString()}`);
+    const response = await apiConfig.get(`/matches`, {
+      params: payload,
+    });
     const result = response.data;
     if (!result.success) {
       return {
@@ -126,36 +100,6 @@ export const getMatchById = async (
   }
 };
 
-export const getAllLeagues = async () => {
-  try {
-    const response = await apiConfig.get(`/leagues?published=${true}`);
-
-    const result = response.data;
-    if (!result.success) {
-      return {
-        success: false,
-        error: result.error || "Failed to fetch leagues",
-      };
-    }
-
-    return {
-      success: true,
-      data: result.data.sort(
-        (a: LeagueT, b: LeagueT) => a.sort_order - b.sort_order
-      ),
-    };
-  } catch (error: any) {
-    console.error("Error fetching leagues:", error);
-    return {
-      success: false,
-      error:
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch leagues",
-    };
-  }
-};
-
 export const getAllTeams = async (): Promise<ApiResponse<TeamT[]>> => {
   try {
     const response = await apiConfig.get(`/teams`);
@@ -185,56 +129,6 @@ export const getAllTeams = async (): Promise<ApiResponse<TeamT[]>> => {
   }
 };
 
-export const getMatchVoteCounts = async (
-  matchId: number
-): Promise<ApiResponse<ApiVoteCountT>> => {
-  try {
-    const response = await apiConfig.get(`/matches/${matchId}/match-votes`);
 
-    const result = response.data;
 
-    if (!result.success) {
-      return {
-        success: false,
-        error: result.error || "Failed to fetch vote counts",
-      };
-    }
 
-    return {
-      success: true,
-      data: result.data!,
-    };
-  } catch (error: any) {
-    console.error("Error fetching vote counts:", error);
-    return {
-      success: false,
-      error:
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch vote counts",
-    };
-  }
-};
-
-// Get comments for a match
-export const getMatchComments = async (
-  matchId: string
-): Promise<ApiResponse<ApiCommentT[]>> => {
-  try {
-    const response = await apiConfig.get(`/matches/${matchId}/comments`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const result: ApiResponse<ApiCommentT[]> = response.data;
-    return result;
-  } catch (error: any) {
-    console.error("Error fetching comments:", error);
-    return {
-      success: false,
-      message: "Failed to fetch comments",
-      error: error.response?.data?.message || error.message || "Unknown error",
-    };
-  }
-};
