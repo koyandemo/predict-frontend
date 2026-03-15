@@ -16,7 +16,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const FIFA_CLUB_WORLD_CUP_LEAGUE_ID = 16;
 export const MATCH_CURRENT_TYPE="GROUP_STAGE"
 
 export type MatchDisplayStatusT =

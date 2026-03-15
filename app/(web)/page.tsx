@@ -3,9 +3,10 @@ import { MatchCarousel } from "./_components/MatchCarousel";
 import {
   buildGroupSections,
   buildKnockoutSections,
+  FIFA_CLUB_WORLD_CUP_LEAGUE_ID,
 } from "@/lib/fifaWorldCupUtils";
 import WorldCupHeroBanner from "./_components/WorldCupHeroBanner";
-import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID } from "@/lib/utils";
+
 
 export default async function HomePage() {
   const matchesRes = await getAllMatches({

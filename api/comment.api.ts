@@ -26,7 +26,7 @@ export const createComment = async (
   commentText: string
 ): Promise<AuthResponseT> => {
   try {
-    const res = await apiConfig.post(`/comments/${matchId}`, {
+    const res = await apiConfig.post(`/comments/${matchId}/key`, {
       text: commentText,
     });
     return res.data;
@@ -44,7 +44,7 @@ export const updateComment = async (
   commentText: string
 ): Promise<AuthResponseT> => {
   try {
-    const res = await apiConfig.put(`/comments/${commentId}`, {
+    const res = await apiConfig.put(`/comments/${commentId}/key`, {
       comment_text: commentText,
     });
     return res.data;
@@ -61,7 +61,7 @@ export const deleteComment = async (
   commentId: number
 ): Promise<AuthResponseT> => {
   try {
-    const res = await apiConfig.delete(`/comments/${commentId}`);
+    const res = await apiConfig.delete(`/comments/${commentId}/key`);
     return res.data;
   } catch (e: any) {
     return {
@@ -98,7 +98,7 @@ export const createReply = async (
   parentCommentId: number
 ): Promise<AuthResponseT> => {
   try {
-    const res = await apiConfig.post(`/comments/${parentCommentId}/replies`, {
+    const res = await apiConfig.post(`/comments/${parentCommentId}/replies/key`, {
       match_id: matchId,
       user_id: userId,
       text: commentText,
@@ -120,7 +120,7 @@ export const addCommentReaction = async (
 ): Promise<AuthResponseT> => {
   try {
     const response = await apiConfig.post(
-      `/comments/${commentId}/reactions`,
+      `/comments/${commentId}/reactions/key`,
       { user_id: userId, reaction_type: reactionType }
     );
 

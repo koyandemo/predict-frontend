@@ -13,7 +13,7 @@ export const registerWithProvider = async (data: {}):Promise<UserT> => {
 
 export const updateUserProfile = async (data: any): Promise<AuthResponseT> => {
   try {
-    const res = await apiConfig.put(`/users/profile`, data);
+    const res = await apiConfig.put(`/users/profile/key`, data);
     return res.data;
   } catch (e: any) {
     return {

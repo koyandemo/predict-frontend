@@ -1,16 +1,13 @@
 import {
   getAllMatches,
   isUpcoming,
-  isKnockoutMatch,
-  isGroupStage,
 } from "@/api/match.api";
 import { MatchCarousel } from "../_components/MatchCarousel";
 import { GroupStandingsTable } from "../_components/GroupStandingsTable";
-import { KnockoutBracket } from "../_components/KnockoutBracket";
 import { Badge } from "@/components/ui/badge";
-import { FIFA_WORLD_CUP_2026_GROUP_STANDINGS } from "@/lib/fifaWorldCupUtils";
+import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID, FIFA_WORLD_CUP_2026_GROUP_STANDINGS } from "@/lib/fifaWorldCupUtils";
 import WorldCupHeroBanner from "../_components/WorldCupHeroBanner";
-import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID } from "@/lib/utils";
+
 
 export default async function WorldCupPage() {
   const matchesRes = await getAllMatches({
