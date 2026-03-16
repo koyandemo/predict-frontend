@@ -48,7 +48,6 @@ const CommentsSection = ({ matchId }: Props) => {
       }
       const current = response?.data?.pagination?.page ?? 1;
       const totalPages = response?.data?.pagination?.total_pages ?? 1;
-
       return {
         comments: response?.data?.data,
         nextPage: current < totalPages ? current + 1 : null,

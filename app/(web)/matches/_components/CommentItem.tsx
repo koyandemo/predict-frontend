@@ -282,8 +282,8 @@ const CommentItemComponent = ({
       )}
     >
       <UserAvatar
-        user={user as UserT}
-        size={isDeep ? "sm" : "md"}
+        user={comment.user as UserT}
+        size={"sm"}
       />
 
       <div className="flex-1 min-w-0">
