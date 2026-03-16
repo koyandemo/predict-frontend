@@ -71,7 +71,7 @@ function LeaguePill({ label, active, logo, onClick }: LeaguePillProps) {
       {logo && (
         <Image
           src={logo}
-          alt={label}
+          alt={`${label} logo`}
           width={20}
           height={20}
           className="w-[20px] h-[20px] rounded-full object-contain"

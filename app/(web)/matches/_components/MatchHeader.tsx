@@ -32,7 +32,7 @@ export function MatchHeader({ match }: MatchHeaderProps) {
 
         <div className="flex items-center justify-center gap-4 md:gap-16 mb-6 md:mb-8">
           <TeamCard
-            name={match.home_team_name}
+            name={match.home_team.name}
             logo={match.home_team.logo_url}
             label="Home"
           />
@@ -42,7 +42,7 @@ export function MatchHeader({ match }: MatchHeaderProps) {
           </span>
 
           <TeamCard
-            name={match.away_team_name}
+            name={match.away_team.name}
             logo={match.away_team.logo_url}
             label="Away"
           />

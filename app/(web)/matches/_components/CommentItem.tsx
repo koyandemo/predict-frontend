@@ -24,11 +24,9 @@ import {
 import { EmojiPicker } from "@/components/EmojiPicker";
 import UserAvatar from "@/components/UserAvatar";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-const REPLIES_PAGE_SIZE = 5;
+const REPLIES_PAGE_SIZE = 1;
 const MAX_COMMENT_LENGTH = 1000;
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface CommentItemProps {
   comment: CommentT;
   matchId: number;
@@ -43,7 +41,6 @@ interface ReactionState {
   hasDisliked: boolean;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 const ReplySkeletons = memo(() => (
   <div className="space-y-4">
     {Array.from({ length: 2 }).map((_, i) => (
@@ -63,7 +60,6 @@ const ReplySkeletons = memo(() => (
 ));
 ReplySkeletons.displayName = "ReplySkeletons";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function transformReply(reply: any, parentId: number): CommentT {
   return {
     id: reply.id,
@@ -87,7 +83,6 @@ function extractReplies(data: any): any[] {
   return [];
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 const CommentItemComponent = ({
   comment,
   matchId,
@@ -96,7 +91,6 @@ const CommentItemComponent = ({
 }: CommentItemProps) => {
   const { user, token, isAuthenticated } = useAuth();
 
-  // Reactions
   const [reaction, setReaction] = useState<ReactionState>({
     likes: comment.likes || 0,
     dislikes: comment.dis_likes || 0,
@@ -104,7 +98,6 @@ const CommentItemComponent = ({
     hasDisliked: false,
   });
 
-  // Replies
   const [replies, setReplies] = useState<CommentT[]>([]);
   const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
   const [showReplies, setShowReplies] = useState(false);
@@ -113,19 +106,16 @@ const CommentItemComponent = ({
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // Reply form
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ── Reaction handler ────────────────────────────────────────────────────────
   const handleReaction = useCallback(
     async (type: "like" | "dislike") => {
       if (!isAuthenticated || !user || !token) return;
 
       const isLike = type === "like";
 
-      // Optimistic update
       setReaction((prev) => {
         const toggling = isLike ? prev.hasLiked : prev.hasDisliked;
         return {
@@ -157,7 +147,6 @@ const CommentItemComponent = ({
           }));
         }
       } catch {
-        // Rollback
         setReaction((prev) => ({
           likes: isLike
             ? prev.hasLiked
@@ -177,7 +166,6 @@ const CommentItemComponent = ({
     [isAuthenticated, user, token, comment.id]
   );
 
-  // ── Load replies (page 1) ───────────────────────────────────────────────────
   const loadReplies = useCallback(async () => {
     if (loadingReplies) return;
     setLoadingReplies(true);
@@ -196,7 +184,6 @@ const CommentItemComponent = ({
     }
   }, [comment.id, loadingReplies]);
 
-  // ── Load more replies (pagination) ─────────────────────────────────────────
   const handleLoadMore = useCallback(async () => {
     if (loadingMore) return;
     const nextPage = repliesPage + 1;
@@ -223,7 +210,6 @@ const CommentItemComponent = ({
     }
   }, [comment.id, repliesPage, loadingMore]);
 
-  // ── Toggle replies ──────────────────────────────────────────────────────────
   const handleToggleReplies = useCallback(async () => {
     if (!showReplies && replyCount > 0 && replies.length === 0) {
       await loadReplies();
@@ -231,7 +217,6 @@ const CommentItemComponent = ({
     setShowReplies((prev) => !prev);
   }, [showReplies, replyCount, replies.length, loadReplies]);
 
-  // ── Submit reply ────────────────────────────────────────────────────────────
   const handleReplySubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -253,7 +238,7 @@ const CommentItemComponent = ({
             user_id: res.data.user_id.toString(),
             user: res.data.user,
             text: res.data.text,
-            timestamp: res.data.timestamp,
+            timestamp: res.data.created_at,
             likes: 0,
             dis_likes: 0,
             reply_count: 0,
@@ -369,7 +354,7 @@ const CommentItemComponent = ({
           {replyCount > 0 && (
             <button
               onClick={handleToggleReplies}
-              className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+              className="flex items-center cursor-pointer gap-1.5 text-xs font-medium text-gray-500 transition-colors"
             >
               {showReplies ? (
                 <>
@@ -426,7 +411,7 @@ const CommentItemComponent = ({
                   type="submit"
                   size="sm"
                   disabled={isSubmitting || !replyContent.trim()}
-                  className="bg-primary hover:bg-primary/90 h-8 text-xs"
+                  className="bg-primary cursor-pointer hover:bg-primary/90 h-8 text-xs"
                 >
                   {isSubmitting ? (
                     <>
@@ -476,7 +461,7 @@ const CommentItemComponent = ({
                   <button
                     onClick={handleLoadMore}
                     disabled={loadingMore}
-                    className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors py-2 pl-1"
+                    className="flex items-center gap-1.5 text-xs font-medium text-gray-500 transition-colors py-2 pl-1"
                   >
                     {loadingMore ? (
                       <>

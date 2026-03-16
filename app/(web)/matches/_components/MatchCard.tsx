@@ -107,7 +107,6 @@ export function MatchCard({ match }: MatchCardProps) {
             <div className="mb-4 flex items-center justify-between gap-3">
               <TeamBlock
                 team={match.home_team}
-                teamName={match.home_team_name}
                 score={match.home_score}
                 isWinner={
                   displayStatus === "finished" &&
@@ -133,7 +132,6 @@ export function MatchCard({ match }: MatchCardProps) {
 
               <TeamBlock
                 team={match.away_team}
-                teamName={match.away_team_name}
                 score={match.away_score}
                 isWinner={
                   displayStatus === "finished" &&

@@ -155,7 +155,7 @@ export function ScorePredictionCard({ match }: ScorePredictionCardProps) {
                     </span>
 
                     <span className="text-xs text-muted-foreground">
-                      {match.away_team_name}
+                      {match.away_team.name}
                     </span>
                   </div>
                 </div>

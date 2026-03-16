@@ -4,13 +4,11 @@ import Image from "next/image";
 
 function TeamBlock({
   team,
-  teamName,
   score,
   isWinner,
   isFav,
 }: {
   team: MatchT["home_team"] | MatchT["away_team"];
-  teamName: string;
   score?: number;
   isWinner: boolean;
   isFav: boolean;

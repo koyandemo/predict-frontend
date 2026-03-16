@@ -1,3 +1,109 @@
+// import { AuthResponseT } from "@/types/auth.type";
+// import apiConfig from "./apiConfig";
+
+// export const getMatchComments = async (
+//   matchId: number,
+//   page = 1,
+//   limit = 10
+// ): Promise<AuthResponseT> => {
+//   try {
+//     const res = await apiConfig.get(`/comments/${matchId}`, {
+//       params: { page, limit },
+//     });
+
+//     return res.data;
+//   } catch (e: any) {
+//     return {
+//       success: false,
+//       message: "Failed to fetch match comments",
+//       error: e.response?.data?.message || e.message,
+//     };
+//   }
+// };
+
+// export const getCommentReplies = async (
+//   commentId: number,
+//   page = 1,
+//   limit = 5
+// ): Promise<AuthResponseT> => {
+//   try {
+//     const res = await apiConfig.get(`/comments/${commentId}/replies`, {
+//       params: { page, limit },
+//     });
+
+//     return res.data;
+//   } catch (e: any) {
+//     return {
+//       success: false,
+//       message: "Failed to fetch replies",
+//       error: e.response?.data?.message || e.message,
+//     };
+//   }
+// };
+
+// export const createComment = async (
+//   matchId: number,
+//   text: string
+// ): Promise<AuthResponseT> => {
+//   try {
+//     const res = await apiConfig.post(`/comments/${matchId}/key`, { text });
+//     return res.data;
+//   } catch (e: any) {
+//     return {
+//       success: false,
+//       message: "Failed to create comment",
+//       error: e.response?.data?.message || e.message,
+//     };
+//   }
+// };
+
+// export const createReply = async (
+//   parentCommentId: number,
+//   matchId: number,
+//   text: string
+// ): Promise<AuthResponseT> => {
+//   try {
+//     const res = await apiConfig.post(
+//       `/comments/${parentCommentId}/replies/key`,
+//       {
+//         match_id: matchId,
+//         text,
+//       }
+//     );
+
+//     return res.data;
+//   } catch (e: any) {
+//     return {
+//       success: false,
+//       message: "Failed to create reply",
+//       error: e.response?.data?.message || e.message,
+//     };
+//   }
+// };
+
+// export const addCommentReaction = async (
+//   commentId: number,
+//   reactionType: "like" | "dislike"
+// ): Promise<AuthResponseT> => {
+//   try {
+//     const res = await apiConfig.post(`/comments/${commentId}/reactions/key`, {
+//       reaction_type: reactionType,
+//     });
+
+//     return res.data;
+//   } catch (e: any) {
+//     return {
+//       success: false,
+//       message: "Failed to add reaction",
+//       error: e.response?.data?.message || e.message,
+//     };
+//   }
+// };
+
+/**
+ * @old_version
+ */
+
 import { AuthResponseT } from "@/types/auth.type";
 import apiConfig from "./apiConfig";
 
@@ -79,7 +185,7 @@ export const getCommentReplies = async (
 ): Promise<AuthResponseT> => {
   try {
     const res = await apiConfig.get(
-      `/comments/${commentId}/replies?page=${page}&limit=${limit}`
+      `/comments/${commentId}/replies/?page=${page}&limit=${limit}`
     );
     return res.data;
   } catch (e: any) {

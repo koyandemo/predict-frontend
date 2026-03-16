@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, Loader2 } from "lucide-react";
 import { CommentT } from "@/types/comment.type";
@@ -78,65 +78,6 @@ const CommentsSection = ({ matchId }: Props) => {
       }
 
       return await createComment(Number(matchId), text);
-    },
-
-    // onMutate: async (text: string) => {
-    //   setIsSubmitting(true);
-
-    //   await queryClient.cancelQueries({
-    //     queryKey: ["matchComments", matchId],
-    //   });
-
-    //   const previousData = queryClient.getQueryData<any>([
-    //     "matchComments",
-    //     matchId,
-    //   ]);
-
-    //   if (previousData && user) {
-    //     const optimisticComment: CommentT = {
-    //       id: Date.now(),
-    //       match_id: matchId,
-    //       user_id: user.user_id,
-    //       text,
-    //       user: user as any,
-    //       timestamp: new Date().toISOString(),
-    //       likes: 0,
-    //       dis_likes: 0,
-    //       reply_count: 0,
-    //       is_replay: false,
-    //       parent_id: 0,
-    //       has_user_liked: false,
-    //     };
-
-    //     queryClient.setQueryData(["matchComments", matchId], (oldData: any) => {
-    //       if (!oldData) return oldData;
-
-    //       return {
-    //         ...oldData,
-    //         pages: oldData.pages.map((page: CommentPageT, i: number) =>
-    //           i === 0
-    //             ? {
-    //                 ...page,
-    //                 comments: [optimisticComment, ...page.comments],
-    //               }
-    //             : page
-    //         ),
-    //       };
-    //     });
-    //   }
-
-    //   return { previousData };
-    // },
-
-    onError: (err: any, _content, context) => {
-      // if (context?.previousData) {
-      //   queryClient.setQueryData(
-      //     ["matchComments", matchId],
-      //     context.previousData
-      //   );
-      // }
-
-      alert(err.message || "Failed to add comment");
     },
 
     onSuccess: () => {
