@@ -1,8 +1,7 @@
 import { AuthResponseT } from "@/types/auth.type";
 import apiConfig from "./apiConfig";
-import { UserT } from "@/types/user.type";
 
-export const registerWithProvider = async (data: {}):Promise<UserT> => {
+export const registerWithProvider = async (data: {})  => {
   try {
     const res = await apiConfig.post(`/users/register-provider`, data);
     return res.data;
@@ -11,7 +10,7 @@ export const registerWithProvider = async (data: {}):Promise<UserT> => {
   }
 }
 
-export const updateUserProfile = async (data: any): Promise<AuthResponseT> => {
+export const updateUserProfile = async (data: any) => {
   try {
     const res = await apiConfig.put(`/users/profile/key`, data);
     return res.data;
@@ -24,8 +23,7 @@ export const updateUserProfile = async (data: any): Promise<AuthResponseT> => {
   }
 };
 
-// Get user stats
-export const getUserStats = async (userId: number): Promise<AuthResponseT> => {
+export const getUserStats = async (userId: number) => {
   try {
     const response = await apiConfig.get(`/users/${userId}/stats`);
     const result: AuthResponseT = response.data;

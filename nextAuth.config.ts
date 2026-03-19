@@ -2,11 +2,12 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import { registerWithProvider } from "./api/user.api";
+import { UserT } from "./types/user.type";
 
-function mapUser(res: any) {
+function mapUser(res: { user: UserT; token: string }) {
   return {
     ...res.user,
-    token:res.token,
+    token: res.token,
   };
 }
 
@@ -15,15 +16,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // profile(profile) {
-      //   return {
-      //     id: profile.sub,
-      //     name: profile.name,
-      //     email: profile.email,
-      //     image: profile.picture,
-      //     provider: "google",
-      //   };
-      // },
       httpOptions: { timeout: 10000 },
     }),
     FacebookProvider({
@@ -51,6 +43,10 @@ export const authOptions: NextAuthOptions = {
             provider: account.provider,
             providerAccountId: account.providerAccountId,
           });
+          console.log(
+            "OAuth provider registration response:",
+            JSON.stringify(res, null, 2)
+          );
           const mapped = mapUser(res?.data as any);
           Object.assign(user, mapped);
 
@@ -65,7 +61,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, trigger, session, user }) {
-      if(trigger === "update" && session?.user) {
+      if (trigger === "update" && session?.user) {
         token.user = session.user;
       }
       if (user) {

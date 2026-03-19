@@ -1,18 +1,18 @@
 import { AuthResponseT } from "@/types/auth.type";
 import apiConfig from "./apiConfig";
 
-export const loginUser = async (
-  email: string,
-  password: string
-): Promise<AuthResponseT> => {
-  try {
-    const response = await apiConfig.post(`/users/login`, { email, password });
-    const result: AuthResponseT = response.data;
-    return result;
-  } catch (error: any) {
-    throw error;
-  }
-};
+// export const loginUser = async (
+//   email: string,
+//   password: string
+// ): Promise<AuthResponseT> => {
+//   try {
+//     const response = await apiConfig.post(`/users/login`, { email, password });
+//     const result: AuthResponseT = response.data;
+//     return result;
+//   } catch (error: any) {
+//     throw error;
+//   }
+// };
 
 export const registerUser = async (userData: {
   name: string;
