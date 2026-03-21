@@ -1,6 +1,7 @@
 import { TeamT } from "@/types/team.type";
 import apiConfig from "./apiConfig";
 import { ApiResponseT } from "@/types/api.type";
+import { FIFA_WORLD_CUP_LEAGUE_SEASON_ID } from "@/lib/fifaWorldCupUtils";
 
 export interface TeamWithVotesT extends TeamT {
   total_votes: number;
@@ -40,6 +41,23 @@ export const getTeamsByVote = async (
         error.response?.data?.message ||
         error.message ||
         "Failed to fetch teams with votes",
+    };
+  }
+};
+
+export const getFifaWorldCupStanding = async () => {
+  try {
+    const response = await apiConfig.get(
+      `/teams/fifa/world-cup-team-standings?league_season_id=${FIFA_WORLD_CUP_LEAGUE_SEASON_ID}`,
+    );
+    return response?.data?.data;
+  } catch (error: any) {
+    return {
+      success: false,
+      error:
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch FIFA World Cup standings",
     };
   }
 };

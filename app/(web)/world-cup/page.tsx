@@ -5,8 +5,9 @@ import {
 import { MatchCarousel } from "../_components/MatchCarousel";
 import { GroupStandingsTable } from "../_components/GroupStandingsTable";
 import { Badge } from "@/components/ui/badge";
-import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID, FIFA_WORLD_CUP_2026_GROUP_STANDINGS } from "@/lib/fifaWorldCupUtils";
+import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID} from "@/lib/fifaWorldCupUtils";
 import WorldCupHeroBanner from "../_components/WorldCupHeroBanner";
+import { getFifaWorldCupStanding } from "@/api/team.api";
 
 
 export default async function WorldCupPage() {
@@ -16,6 +17,8 @@ export default async function WorldCupPage() {
     status:"SCHEDULED",
     limit: 5,
   });
+
+  const fifaWorldCupStandingDatas = await getFifaWorldCupStanding();
 
   if (!matchesRes.success) {
     return (
@@ -29,6 +32,8 @@ export default async function WorldCupPage() {
     );
   }
 
+
+
   const matches = matchesRes.data ?? [];
 
   const upcomingWorldCupMatches = matches.filter(isUpcoming);
@@ -39,10 +44,7 @@ export default async function WorldCupPage() {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8 flex flex-col gap-10">
-        {/* Hero Section */}
         <WorldCupHeroBanner />
-
-        {/* Group Stage Section */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">Group Stage</h2>
@@ -50,7 +52,7 @@ export default async function WorldCupPage() {
             </div>
 
             <div className="grid gap-6">
-              {Object.entries(FIFA_WORLD_CUP_2026_GROUP_STANDINGS).map(
+              {Object.entries(fifaWorldCupStandingDatas).reverse().map(
                 ([groupName, teams]) => (
                   <GroupStandingsTable
                     key={groupName}
