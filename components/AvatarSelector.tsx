@@ -49,17 +49,16 @@ export function AvatarSelector({
     if (!signedUrlResponse.success || !signedUrlResponse.data) {
       throw new Error(signedUrlResponse.message || "Failed to get upload URL");
     }
-
+   
     const uploadResult = await uploadFileToS3(
       signedUrlResponse.data,
       file,
       (progress) => setUploadProgress(progress)
     );
-
     if (!uploadResult.success || !uploadResult.url) {
       throw new Error(uploadResult.message || "Upload failed");
     }
-
+    
     return uploadResult.url;
   };
 

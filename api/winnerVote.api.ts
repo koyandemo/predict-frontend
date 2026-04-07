@@ -132,7 +132,7 @@ export const updateWinnerVote = async (
   data: { team_id: number }
 ): Promise<ApiResponseT<UserWinnerVoteT>> => {
   try {
-    const response = await apiConfig.put(`/winner-votes/vote/${voteId}`, data);
+    const response = await apiConfig.put(`/winner-votes/vote/${voteId}/key`, data);
     const result = response.data;
 
     if (!result.success) {
