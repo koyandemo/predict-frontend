@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo} from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { MatchesListSkeleton, MatchListSkeleton } from "@/components/skeletons";
-import type { MatchFilterT, MatchT } from "@/types/match.type";
+import type {MatchT } from "@/types/match.type";
 import { getAllMatches } from "@/api/match.api";
 import { MatchCard } from "./MatchCard";
 import { ErrorDisplay } from "../../../../components/ErrorDisplay";
@@ -19,43 +20,49 @@ import {
 import { FIFA_WORLD_CUP_GROUPS } from "@/lib/fifaWorldCupUtils";
 import { useLeagues } from "@/hooks/useLeague";
 import { Button } from "@/components/ui/button";
-import { RefreshCwIcon} from "lucide-react";
+import { RefreshCwIcon } from "lucide-react";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const normalize = (val: string | null, fallback = "all") =>
+  val?.trim() || fallback;
 
 const buildFilters = (
-  league_id: string | null,
-  status: string | null,
-  group_name: string | null
+  league_id: string,
+  status: string,
+  group_name: string
 ) => {
   const filters: Record<string, string | number> = {};
-
-  if (league_id && league_id !== "all") filters.league_id = league_id;
-  if (status && status !== "all") filters.status = status.toUpperCase();
-  if (group_name && group_name !== "all")
-    filters.group_name = group_name.toUpperCase();
-
+  if (league_id !== "all") filters.league_id = league_id;
+  if (status !== "all") filters.status = status.toUpperCase();
+  if (group_name !== "all") filters.group_name = group_name.toUpperCase();
   return Object.keys(filters).length ? filters : undefined;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function MatchesList() {
-  const [filterData, setFilterData] = useState<MatchFilterT>({
-    league_id: "all",
-    status: "SCHEDULED",
-    group_name: "all",
-    page: 1,
-    limit: 10,
-  });
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Initialise filters from URL on mount
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setFilterData((prev) => ({
-      ...prev,
-      league_id: params.get("league_id") || "all",
-      status: (params.get("status") as any) || "all",
-      group_name: params.get("group_name") || "all",
-    }));
-  }, []);
+  // ── Derive filter state directly from URL (single source of truth) ──────────
+  const league_id = normalize(searchParams.get("league_id"));
+  const status = normalize(searchParams.get("status")?.toUpperCase() as string, "all"); // normalise to uppercase
+  const group_name = normalize(searchParams.get("group_name"));
 
+  // ── Update URL params helper ─────────────────────────────────────────────────
+  const setParam = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    value === "all" ? params.delete(key) : params.set(key, value.toUpperCase());
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const resetFilters = () => {
+    router.replace(pathname, { scroll: false });
+  };
+
+  // ── Leagues ──────────────────────────────────────────────────────────────────
   const {
     data: leagues = [],
     isLoading: loadingLeagues,
@@ -64,78 +71,46 @@ export function MatchesList() {
 
   // Auto-set recommended gameweek when a league is selected
   useEffect(() => {
-    if (!filterData.league_id || filterData.league_id === "all") return;
-    const league = leagues.find(
-      (l) => l.id === parseInt(filterData.league_id!)
-    );
+    if (!league_id || league_id === "all") return;
+    const league = leagues.find((l) => l.id === parseInt(league_id));
     if (league?.recommended_gameweek != null) {
-      setFilterData((prev) => ({
-        ...prev,
-        gameWeek: league.recommended_gameweek!.toString(),
-      }));
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("gameweek_id", league.recommended_gameweek.toString());
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
-  }, [filterData.league_id, leagues]);
+  }, [league_id, leagues]);
 
-  // Sync filterData → URL
-  useEffect(() => {
-    const url = new URL(window.location.href);
-
-    filterData.league_id && filterData.league_id !== "all"
-      ? url.searchParams.set("league_id", filterData.league_id)
-      : url.searchParams.delete("league_id");
-
-    filterData.status && filterData.status !== "all"
-      ? url.searchParams.set("status", filterData.status)
-      : url.searchParams.delete("status");
-
-    filterData.group_name && filterData.group_name !== "all"
-      ? url.searchParams.set("group_name", filterData.group_name)
-      : url.searchParams.delete("group_name");
-
-    window.history.replaceState({}, "", url);
-  }, [filterData]);
-
+  // ── Matches query ────────────────────────────────────────────────────────────
   const {
     data: matches = [],
     isLoading: loadingMatches,
     error: matchesError,
   } = useQuery<MatchT[]>({
-    queryKey: [
-      "matches",
-      filterData.league_id,
-      filterData.status,
-      filterData.group_name,
-    ],
+    queryKey: ["matches", league_id, status, group_name],
     queryFn: async () => {
-      const filters = buildFilters(
-        filterData.league_id || "all",
-        filterData.status || "all",
-        filterData.group_name || "all"
-      );
+      const filters = buildFilters(league_id, status, group_name);
       const res = await getAllMatches(filters as any);
       if (!res.success || !res.data) {
         throw new Error(res.error ?? "Failed to fetch matches");
       }
       return res.data;
     },
-    // staleTime: 30_000, // treat data as fresh for 30 s
     refetchOnWindowFocus: false,
   });
 
+  // ── Title ────────────────────────────────────────────────────────────────────
   const title = useMemo(() => {
-    if (filterData.status && filterData.status !== "all") {
-      const s = filterData.status;
-      return `${s[0].toUpperCase()}${s.slice(1).toLowerCase()} Matches`;
+    if (status && status !== "all") {
+      return `${status[0].toUpperCase()}${status.slice(1).toLowerCase()} Matches`;
     }
-    if (filterData.league_id && filterData.league_id !== "all") {
-      const name =
-        leagues.find((l) => l.id === parseInt(filterData.league_id!))?.name ??
-        "";
+    if (league_id && league_id !== "all") {
+      const name = leagues.find((l) => l.id === parseInt(league_id))?.name ?? "";
       return `${name} Matches`;
     }
     return "All Matches";
-  }, [filterData.league_id, filterData.status, leagues]);
+  }, [league_id, status, leagues]);
 
+  // ── Guards ───────────────────────────────────────────────────────────────────
   if (loadingLeagues) return <MatchesListSkeleton />;
 
   if (leaguesError || matchesError) {
@@ -150,26 +125,25 @@ export function MatchesList() {
     );
   }
 
+  const hasActiveFilters =
+    league_id !== "all" || status !== "all" || group_name !== "all";
+
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-8">
       <div className="space-y-4">
         <MatchListFilterCard title="Filter by League">
           <LeagueFilter
             leagues={leagues}
-            selectedLeague={filterData.league_id as string}
-            onSelectLeague={(val) =>
-              // ✅ Fixed: was incorrectly setting `league` instead of `league_id`
-              setFilterData((prev) => ({ ...prev, league_id: val }))
-            }
+            selectedLeague={league_id}
+            onSelectLeague={(val) => setParam("league_id", val as string)}
           />
         </MatchListFilterCard>
 
         <div className="flex justify-end items-end gap-2 mt-10">
           <Select
-            value={filterData.status?.toLocaleLowerCase()}
-            onValueChange={(val) =>
-              setFilterData((prev) => ({ ...prev, status: val as any }))
-            }
+            value={status.toLowerCase()} // display lowercase in UI
+            onValueChange={(val) => setParam("status", val)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Filter by status" />
@@ -184,10 +158,8 @@ export function MatchesList() {
           </Select>
 
           <Select
-            value={filterData.group_name as string}
-            onValueChange={(val) =>
-              setFilterData((prev) => ({ ...prev, group_name: val }))
-            }
+            value={group_name}
+            onValueChange={(val) => setParam("group_name", val)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Filter by Group" />
@@ -201,20 +173,12 @@ export function MatchesList() {
               ))}
             </SelectContent>
           </Select>
-          {(filterData.status !== "all" ||
-            filterData.league_id !== "all" ||
-            filterData.group_name !== "all") && (
+
+          {hasActiveFilters && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setFilterData((prev) => ({
-                  ...prev,
-                  league_id: "all",
-                  status: "all",
-                  group_name: "all",
-                }))
-              }
+              onClick={resetFilters}
               className="text-muted-foreground hover:text-foreground gap-1 h-[36px]"
             >
               <RefreshCwIcon className="h-3.5 w-3.5" />

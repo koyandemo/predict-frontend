@@ -1,8 +1,8 @@
 import { isKnockoutMatch } from "@/api/match.api";
 import { MatchSectionT, MatchT } from "@/types/match.type";
 
-export const FIFA_CLUB_WORLD_CUP_LEAGUE_ID = 16;
-export const FIFA_WORLD_CUP_LEAGUE_SEASON_ID=17;
+export const FIFA_CLUB_WORLD_CUP_LEAGUE_ID = 1;
+export const FIFA_WORLD_CUP_LEAGUE_SEASON_ID=1;
 
 export const FIFA_WORLD_CUP_2026_GROUP_STANDINGS = {
   A: [
