@@ -3,7 +3,7 @@
 //     isUpcoming,
 //     isKnockoutMatch,
 //     isGroupStage,
-//   } from "@/api/match.api";
+//   } from "@/apiConfig/match.api";
 //   import { HeroBanner } from "../_components/HeroBanner";
 //   import { MatchCarousel } from "../_components/MatchCarousel";
 //   import { LeagueT } from "@/types/league.type";
@@ -12,7 +12,7 @@
 //   import { Badge } from "@/components/ui/badge";
 //   import { FIFA_WORLD_CUP_2026_GROUP_STANDINGS } from "@/lib/fifaWorldCupUtils";
 //   import WorldCupHeroBanner from "../_components/WorldCupHeroBanner";
-//   import { getAllLeagues } from "@/api/league.api";
+//   import { getAllLeagues } from "@/apiConfig/league.api";
   
 //   export default async function WorldCupPage() {
 //     const [matchesRes, leaguesRes] = await Promise.all([

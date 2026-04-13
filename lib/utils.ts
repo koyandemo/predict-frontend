@@ -6,7 +6,7 @@ import {
   isSemiFinal,
   isRoundOf16,
   isThirdPlacePlayoff,
-} from "@/api/match.api";
+} from "@/apiConfig/match.api";
 import { MatchT } from "@/types/match.type";
 import { clsx, type ClassValue } from "clsx";
 import { LucideIcon, MessageSquare, TrendingUp, Users } from "lucide-react";

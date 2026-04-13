@@ -20,7 +20,7 @@ import {
   addCommentReaction,
   createReply,
   getCommentReplies,
-} from "@/api/comment.api";
+} from "@/apiConfig/comment.api";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import UserAvatar from "@/components/UserAvatar";
 

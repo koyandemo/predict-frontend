@@ -1,4 +1,4 @@
-import { getAllLeagues } from "@/api/league.api";
+import { getAllLeagues } from "@/apiConfig/league.api";
 import { LeagueT } from "@/types/league.type";
 import { useQuery } from "@tanstack/react-query";
 

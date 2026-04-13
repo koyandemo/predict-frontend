@@ -15,7 +15,7 @@ import {
 import { MatchT} from "@/types/match.type";
 import TeamBlock from "./TeamBlock";
 import InfoPill from "./InfoPill";
-import { getMatchVotes } from "@/api/matchVote.api";
+import { getMatchVotes } from "@/apiConfig/matchVote.api";
 import { MatchVoteT } from "@/types/matchVote.type";
 
 interface MatchCardProps {

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { MatchesListSkeleton, MatchListSkeleton } from "@/components/skeletons";
 import type {MatchT } from "@/types/match.type";
-import { getAllMatches } from "@/api/match.api";
+import { getAllMatches } from "@/apiConfig/match.api";
 import { MatchCard } from "./MatchCard";
 import { ErrorDisplay } from "../../../../components/ErrorDisplay";
 import { LeagueFilter } from "./LeagueFilter";

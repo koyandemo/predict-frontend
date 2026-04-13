@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MatchT } from "@/types/match.type";
-import { submitPrediction } from "@/api/prediction.api";
-import { getMatchVotes } from "@/api/matchVote.api";
+import { submitPrediction } from "@/apiConfig/prediction.api";
+import { getMatchVotes } from "@/apiConfig/matchVote.api";
 import { useAuth } from "@/context/AuthContext";
 
 export type VoteChoice = "HOME" | "AWAY" | "DRAW";

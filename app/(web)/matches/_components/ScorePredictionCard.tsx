@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { MatchT, ScorePredictionT } from "@/types/match.type";
 import { useAuth } from "@/context/AuthContext";
-import { getScorePredictions, voteScorePrediction } from "@/api/prediction.api";
+import { getScorePredictions, voteScorePrediction } from "@/apiConfig/prediction.api";
 
 interface ScorePredictionCardProps {
   match: MatchT;

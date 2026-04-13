@@ -1,8 +1,8 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
-import { registerWithProvider } from "./api/user.api";
 import { UserT } from "./types/user.type";
+import { registerWithProvider } from "./apiConfig/user.api";
 
 function mapUser(res: { user: UserT; token: string }) {
   return {

@@ -1,13 +1,13 @@
 import {
   getAllMatches,
   isUpcoming,
-} from "@/api/match.api";
+} from "@/apiConfig/match.api";
 import { MatchCarousel } from "../_components/MatchCarousel";
 import { GroupStandingsTable } from "../_components/GroupStandingsTable";
 import { Badge } from "@/components/ui/badge";
 import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID} from "@/lib/fifaWorldCupUtils";
 import WorldCupHeroBanner from "../_components/WorldCupHeroBanner";
-import { getFifaWorldCupStanding } from "@/api/team.api";
+import { getFifaWorldCupStanding } from "@/apiConfig/team.api";
 
 
 export default async function WorldCupPage() {

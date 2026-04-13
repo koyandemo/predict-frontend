@@ -25,8 +25,8 @@ import {
 import { TeamT } from "@/types/team.type";
 import { ProfileSkeleton, ProfileStatsSkeleton } from "@/components/skeletons";
 import UserAvatar from "@/components/UserAvatar";
-import { getUserStats, updateUserProfile } from "@/api/user.api";
-import { getAllTeams } from "@/api/match.api";
+import { getUserStats, updateUserProfile } from "@/apiConfig/user.api";
+import { getAllTeams } from "@/apiConfig/match.api";
 import { AvatarSelector } from "@/components/AvatarSelector";
 import { UserT } from "@/types/user.type";
 import { signOut, useSession } from "next-auth/react";

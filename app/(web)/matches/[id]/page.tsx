@@ -4,7 +4,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { MatchDetailSkeleton } from "@/components/skeletons";
-import { getMatchById } from "@/api/match.api";
+import { getMatchById } from "@/apiConfig/match.api";
 import CommentsSection from "../_components/CommentsSection";
 import { MatchHeader } from "../_components/MatchHeader";
 import VotingPanel from "../_components/VotingPanle";

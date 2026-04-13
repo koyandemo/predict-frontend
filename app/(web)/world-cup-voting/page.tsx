@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useWinnerVote } from "@/hooks/useWinnerVote";
-import { getTeamsByVote, TeamWithVotesT } from "@/api/team.api";
+import { getTeamsByVote, TeamWithVotesT } from "@/apiConfig/team.api";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {

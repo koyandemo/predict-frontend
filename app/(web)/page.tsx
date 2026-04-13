@@ -1,4 +1,4 @@
-import { getAllMatches, isUpcoming } from "@/api/match.api";
+import { getAllMatches, isUpcoming } from "@/apiConfig/match.api";
 import { MatchCarousel } from "./_components/MatchCarousel";
 import {
   buildGroupSections,

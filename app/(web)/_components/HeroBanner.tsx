@@ -5,7 +5,7 @@ import { Trophy } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { FootballApiStatisticsT } from "@/types/football.type";
-import { footballApiService } from "@/api/football.api";
+import { footballApiService } from "@/apiConfig/football.api";
 import { generateHeroBanners } from "@/lib/utils";
 
 export function HeroBanner() {

@@ -13,7 +13,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { CommentItem } from "./CommentItem";
 import { CommentForm } from "./CommentForm";
-import { createComment, getMatchComments } from "@/api/comment.api";
+import { createComment, getMatchComments } from "@/apiConfig/comment.api";
 
 interface CommentPageT {
   comments: CommentT[];

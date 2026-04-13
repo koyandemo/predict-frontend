@@ -1,4 +1,4 @@
-import { getAllLeagues, getAllMatches, isUpcoming } from "@/api/match.api";
+import { getAllLeagues, getAllMatches, isUpcoming } from "@/apiConfig/match.api";
 import { LeagueT } from "@/types/league.type";
 import { groupMatchesByLeague, MATCH_GENRES } from "@/lib/utils";
 import { HeroBanner } from "./HeroBanner";

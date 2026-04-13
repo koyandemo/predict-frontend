@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Camera, Upload } from "lucide-react";
-import { getSignedUrl, uploadFileToS3 } from "@/api/file.api";
-import { updateUserProfile } from "@/api/user.api";
+import { getSignedUrl, uploadFileToS3 } from "@/apiConfig/file.api";
+import { updateUserProfile } from "@/apiConfig/user.api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSession } from "next-auth/react";
 import { UserT } from "@/types/user.type";

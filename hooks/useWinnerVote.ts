@@ -6,7 +6,7 @@ import {
   updateWinnerVote,
   WinnerVoteT,
   UserWinnerVoteT,
-} from "@/api/winnerVote.api";
+} from "@/apiConfig/winnerVote.api";
 
 interface UseWinnerVoteResult {
   votes: WinnerVoteT[];
