@@ -5,7 +5,7 @@ import { AuthProviderClient } from "@/provider/AuthProviderClient";
 import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Toaster } from "sonner";
-import "./globals.css"
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -83,6 +83,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
+      <meta name="color-scheme" content="dark"></meta>
       <link rel="icon" href="/logo.png" />
       <body className={`${inter.className} font-sans antialiased`}>
         <AuthProviderClient>
