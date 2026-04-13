@@ -3,8 +3,8 @@ import Link from "next/link";
 export function Footer() {
   return (
     <footer className="bg-card border-t border-border">
-      <div className="w-[60%] mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 justify-center  gap-8">
+      <div className="w-full md:w-[60%] mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 justify-start md:justify-center gap-8">
           <div>
             <h4 className="font-medium mb-4">Quick Links</h4>
             <ul className="space-y-2">
