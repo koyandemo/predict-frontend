@@ -14,7 +14,7 @@ const authMiddleware = withAuth(() => undefined, {
 
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
+  console.log(pathname,"17")
   const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
     pathname.startsWith(route)
   );

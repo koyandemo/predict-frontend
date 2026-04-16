@@ -18,11 +18,11 @@ export function Footer() {
                   Matches
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/leaderboard" className="text-muted-foreground hover:text-primary text-sm">
                   Leaderboard
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/profile" className="text-muted-foreground hover:text-primary text-sm">
                   Profile

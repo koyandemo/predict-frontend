@@ -94,7 +94,7 @@ export default function ProfilePage() {
         }
       } catch (error) {
       } finally {
-        // setLoading(false);
+        setLoading(false);
       }
     };
 
