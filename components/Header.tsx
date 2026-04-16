@@ -61,6 +61,8 @@ export function Header() {
       : [{ href: loginUrl, label: "Login", icon: LogIn }]),
   ];
 
+
+  console.log(isAuthenticated,"isAuthenticated")
   return (
     <>
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40">

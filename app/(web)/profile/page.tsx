@@ -51,7 +51,7 @@ export default function ProfilePage() {
   const [teams, setTeams] = useState<TeamT[]>([]);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
@@ -94,7 +94,7 @@ export default function ProfilePage() {
         }
       } catch (error) {
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
