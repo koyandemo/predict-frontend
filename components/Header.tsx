@@ -62,7 +62,6 @@ export function Header() {
   ];
 
 
-  console.log(isAuthenticated,"isAuthenticated")
   return (
     <>
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40">
@@ -87,7 +86,6 @@ export function Header() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
-              const Icon = link.icon;
               return (
                 <Link
                   key={link.href}

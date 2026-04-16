@@ -4,6 +4,7 @@ import FacebookProvider from "next-auth/providers/facebook";
 import { UserT } from "./types/user.type";
 import { registerWithProvider } from "./apiConfig/user.api";
 
+console.log(process.env.NEXTAUTH_SECRET,"nextAuth Secret")
 function mapUser(res: { user: UserT; token: string }) {
   return {
     ...res.user,

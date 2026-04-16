@@ -58,7 +58,7 @@ export function GroupStandingsTable({ groupName, teams }: GroupStandingsTablePro
                 <tr key={team.team.id} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
                   <td className="py-2 px-2">
                     <div className="flex items-center gap-2">
-                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                      <span className={`min-w-6 min-h-6 rounded-full flex items-center justify-center text-xs font-medium ${
                         index < 2 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 
                         index === 2 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100' : 
                         'bg-transparent'
@@ -89,7 +89,7 @@ export function GroupStandingsTable({ groupName, teams }: GroupStandingsTablePro
         
         <div className="mt-3 text-xs text-muted-foreground space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 flex items-center justify-center text-xs font-medium">1</span>
+            <span className="min-w-4 min-h-4 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 flex items-center justify-center text-xs font-medium">1</span>
             <span>Qualifies for Round of 16</span>
           </div>
           <div className="flex items-center gap-2">
