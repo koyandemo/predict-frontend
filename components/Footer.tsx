@@ -70,8 +70,8 @@ export function Footer() {
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center">
-          <p className="text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} Football Predictor. All rights reserved.
+          <p className="text-muted-foreground text-xs">
+            &copy; {new Date().getFullYear()} Football Predictor.<br/> All rights reserved.
           </p>
         </div>
       </div>
