@@ -24,6 +24,8 @@ export default async function HomePage() {
 
   const matches = matchesRes.data ?? [];
 
+  console.log(matches,"matches")
+
   if (matches.length === 0) {
     return (
       <ErrorState message="No matches found for the FIFA Club World Cup. Please check back later." />
