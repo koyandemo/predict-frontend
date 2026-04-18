@@ -30,7 +30,7 @@ export default async function HomePage() {
     );
   }
 
-  const upComingMatches = matches.filter(isUpcoming);
+  const upComingMatches = matches.filter(isUpcoming);//inhere in kickoff is already expired
 
   const groupMatchSectionData = buildGroupSections(upComingMatches);
   const finishedMatchData = matches.filter((m) => m.status === "FINISHED");
