@@ -1,7 +1,4 @@
-import {
-  MatchFilterT,
-  MatchT,
-} from "@/types/match.type";
+import { MatchFilterT, MatchT } from "@/types/match.type";
 import apiConfig from "./apiConfig";
 import { TeamT } from "@/types/team.type";
 
@@ -16,6 +13,7 @@ export const isUpcoming = (match: MatchT) => match.status !== "FINISHED";
 export const isFinal = (m: MatchT) => m.type === "FINAL";
 export const isSemiFinal = (m: MatchT) => m.type === "SEMIFINAL";
 export const isQuarterFinal = (m: MatchT) => m.type === "QUARTERFINAL";
+export const isRoundOf32 = (m: MatchT) => m.type === "ROUND_OF_32";
 export const isRoundOf16 = (m: MatchT) => m.type === "ROUND_OF_16";
 export const isThirdPlacePlayoff = (m: MatchT) =>
   m.type === "THIRD_PLACE_PLAYOFF";
@@ -35,9 +33,9 @@ export const isKnockoutMatch = (m: MatchT) =>
   isFinal(m) ||
   isSemiFinal(m) ||
   isQuarterFinal(m) ||
+  isRoundOf32(m) ||
   isRoundOf16(m) ||
   isThirdPlacePlayoff(m);
-
 
 export const getAllMatches = async (
   payload?: MatchFilterT
@@ -128,9 +126,3 @@ export const getAllTeams = async (): Promise<ApiResponse<TeamT[]>> => {
     };
   }
 };
-
-
-
-
-
-

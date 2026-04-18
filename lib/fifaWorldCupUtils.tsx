@@ -1,8 +1,8 @@
-import { isKnockoutMatch } from "@/apiConfig/match.api";
+import { isGroupStage, isKnockoutMatch } from "@/apiConfig/match.api";
 import { MatchSectionT, MatchT } from "@/types/match.type";
 
 export const FIFA_CLUB_WORLD_CUP_LEAGUE_ID = 1;
-export const FIFA_WORLD_CUP_LEAGUE_SEASON_ID=1;
+export const FIFA_WORLD_CUP_LEAGUE_SEASON_ID = 1;
 
 export const FIFA_WORLD_CUP_2026_GROUP_STANDINGS = {
   A: [
@@ -160,18 +160,31 @@ export const FIFA_WORLD_CUP_GROUPS = [
   "L",
 ] as const;
 
+export const FIFA_WORLD_CUP_TYPES = [
+  // "NORMAL",
+  // "FRIENDLY",
+  "GROUP_STAGE",
+  "ROUND_OF_32",
+  "ROUND_OF_16",
+  "QUARTERFINAL",
+  "SEMIFINAL",
+  "THIRD_PLACE_PLAYOFF",
+  "FINAL",
+];
+
 export const KNOCKOUT_TYPES = [
   { type: "FINAL", title: "Final" },
   { type: "SEMIFINAL", title: "Semi Finals" },
   { type: "THIRD_PLACE_PLAYOFF", title: "Third Place Playoff" },
   { type: "QUARTERFINAL", title: "Quarter Finals" },
+  { type: "ROUND_OF_32", title: "Round of 32" },
   { type: "ROUND_OF_16", title: "Round of 16" },
 ] as const;
 
 export function buildGroupSections(matches: MatchT[]): MatchSectionT[] {
   const byGroup = new Map<string, MatchT[]>();
-
-  for (const match of matches) {
+  const groupStages = matches.filter(isGroupStage);
+  for (const match of groupStages) {
     const key = match.group_name ?? "Other";
     if (!byGroup.has(key)) byGroup.set(key, []);
     byGroup.get(key)!.push(match);
@@ -185,7 +198,6 @@ export function buildGroupSections(matches: MatchT[]): MatchSectionT[] {
 
 export function buildKnockoutSections(matches: MatchT[]): MatchSectionT[] {
   const knockouts = matches.filter(isKnockoutMatch);
-
   return KNOCKOUT_TYPES.reduce<MatchSectionT[]>((acc, { type, title }) => {
     const filtered = knockouts.filter((m) => m.type === type);
     if (filtered.length > 0) acc.push({ title, matches: filtered });

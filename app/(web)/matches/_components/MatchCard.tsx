@@ -12,11 +12,19 @@ import {
   getMatchDisplayStatus,
   getStatusBadgeVariant,
 } from "@/lib/matchStatusUtils";
-import { MatchT} from "@/types/match.type";
+import { MatchT } from "@/types/match.type";
 import TeamBlock from "./TeamBlock";
 import InfoPill from "./InfoPill";
 import { getMatchVotes } from "@/apiConfig/matchVote.api";
 import { MatchVoteT } from "@/types/matchVote.type";
+import {
+  isFinal,
+  isQuarterFinal,
+  isRoundOf16,
+  isRoundOf32,
+  isSemiFinal,
+  isThirdPlacePlayoff,
+} from "@/apiConfig/match.api";
 
 interface MatchCardProps {
   match: MatchT;
@@ -24,11 +32,12 @@ interface MatchCardProps {
 
 export function MatchCard({ match }: MatchCardProps) {
   const isKnockout =
-    match.type === "FINAL" ||
-    match.type === "SEMIFINAL" ||
-    match.type === "QUARTERFINAL" ||
-    match.type === "ROUND_OF_16" ||
-    match.type === "THIRD_PLACE_PLAYOFF";
+    isFinal(match) ||
+    isSemiFinal(match) ||
+    isQuarterFinal(match) ||
+    isRoundOf32(match) ||
+    isRoundOf16(match) ||
+    isThirdPlacePlayoff(match);
 
   const showDraw = match.allow_draw !== false && !isKnockout;
   const { date, time } = formatCombinedMatchDateTimeForUser(match.kickoff);
@@ -70,20 +79,21 @@ export function MatchCard({ match }: MatchCardProps) {
         <CardContent className="flex h-full flex-col p-0">
           <div className="flex items-center justify-between border-b border-border bg-linear-to-r from-primary/10 to-secondary/10 p-3">
             <div className="flex gap-2 flex-wrap">
-              <Badge variant="secondary" className="text-xs font-medium">
-                {match.league.name}
-              </Badge>
-              {match.group_name && (
+              {match.group_name && match.type === "GROUP_STAGE" && (
                 <Badge variant="outline" className="text-xs font-medium">
                   Group {match.group_name}
                 </Badge>
               )}
-              {/* {match.type === "GROUP_STAGE" && (
+              
+              {match.type !== "GROUP_STAGE" && (
                 <Badge variant="outline" className="text-xs font-medium">
-                  Group Stage
+                  {match.type}
                 </Badge>
-              )} */}
+              )}
             </div>
+            <Badge variant="secondary" className="text-[10px] font-medium">
+                {match.league.name}
+              </Badge>
 
             <Badge
               variant={getStatusBadgeVariant(displayStatus)}

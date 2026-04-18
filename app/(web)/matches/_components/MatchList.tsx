@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo} from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { MatchesListSkeleton, MatchListSkeleton } from "@/components/skeletons";
-import type {MatchT } from "@/types/match.type";
+import type { MatchT, MatchTypeT } from "@/types/match.type";
 import { getAllMatches } from "@/apiConfig/match.api";
 import { MatchCard } from "./MatchCard";
 import { ErrorDisplay } from "../../../../components/ErrorDisplay";
@@ -17,12 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FIFA_WORLD_CUP_GROUPS } from "@/lib/fifaWorldCupUtils";
+import {
+  FIFA_WORLD_CUP_GROUPS,
+  FIFA_WORLD_CUP_TYPES,
+} from "@/lib/fifaWorldCupUtils";
 import { useLeagues } from "@/hooks/useLeague";
 import { Button } from "@/components/ui/button";
 import { RefreshCwIcon } from "lucide-react";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const normalize = (val: string | null, fallback = "all") =>
   val?.trim() || fallback;
@@ -30,28 +31,30 @@ const normalize = (val: string | null, fallback = "all") =>
 const buildFilters = (
   league_id: string,
   status: string,
-  group_name: string
+  group_name: string,
+  type: MatchTypeT
 ) => {
   const filters: Record<string, string | number> = {};
   if (league_id !== "all") filters.league_id = league_id;
   if (status !== "all") filters.status = status.toUpperCase();
   if (group_name !== "all") filters.group_name = group_name.toUpperCase();
+  if (type) filters.type = type.toUpperCase();
   return Object.keys(filters).length ? filters : undefined;
 };
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function MatchesList() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  // ── Derive filter state directly from URL (single source of truth) ──────────
   const league_id = normalize(searchParams.get("league_id"));
-  const status = normalize(searchParams.get("status")?.toUpperCase() as string, "all"); // normalise to uppercase
+  const status = normalize(
+    searchParams.get("status")?.toUpperCase() as string,
+    "all"
+  );
   const group_name = normalize(searchParams.get("group_name"));
+  const type = normalize(searchParams.get("type") || "GROUP_STAGE");
 
-  // ── Update URL params helper ─────────────────────────────────────────────────
   const setParam = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     value === "all" ? params.delete(key) : params.set(key, value.toUpperCase());
@@ -62,14 +65,12 @@ export function MatchesList() {
     router.replace(pathname, { scroll: false });
   };
 
-  // ── Leagues ──────────────────────────────────────────────────────────────────
   const {
     data: leagues = [],
     isLoading: loadingLeagues,
     error: leaguesError,
   } = useLeagues({ published: true });
 
-  // Auto-set recommended gameweek when a league is selected
   useEffect(() => {
     if (!league_id || league_id === "all") return;
     const league = leagues.find((l) => l.id === parseInt(league_id));
@@ -80,15 +81,19 @@ export function MatchesList() {
     }
   }, [league_id, leagues]);
 
-  // ── Matches query ────────────────────────────────────────────────────────────
   const {
     data: matches = [],
     isLoading: loadingMatches,
     error: matchesError,
   } = useQuery<MatchT[]>({
-    queryKey: ["matches", league_id, status, group_name],
+    queryKey: ["matches", league_id, status, group_name, type],
     queryFn: async () => {
-      const filters = buildFilters(league_id, status, group_name);
+      const filters = buildFilters(
+        league_id,
+        status,
+        group_name,
+        type as MatchTypeT
+      );
       const res = await getAllMatches(filters as any);
       if (!res.success || !res.data) {
         throw new Error(res.error ?? "Failed to fetch matches");
@@ -98,19 +103,20 @@ export function MatchesList() {
     refetchOnWindowFocus: false,
   });
 
-  // ── Title ────────────────────────────────────────────────────────────────────
   const title = useMemo(() => {
     if (status && status !== "all") {
-      return `${status[0].toUpperCase()}${status.slice(1).toLowerCase()} Matches`;
+      return `${status[0].toUpperCase()}${status
+        .slice(1)
+        .toLowerCase()} Matches`;
     }
     if (league_id && league_id !== "all") {
-      const name = leagues.find((l) => l.id === parseInt(league_id))?.name ?? "";
+      const name =
+        leagues.find((l) => l.id === parseInt(league_id))?.name ?? "";
       return `${name} Matches`;
     }
     return "All Matches";
   }, [league_id, status, leagues]);
 
-  // ── Guards ───────────────────────────────────────────────────────────────────
   if (loadingLeagues) return <MatchesListSkeleton />;
 
   if (leaguesError || matchesError) {
@@ -126,9 +132,11 @@ export function MatchesList() {
   }
 
   const hasActiveFilters =
-    league_id !== "all" || status !== "all" || group_name !== "all";
+    league_id !== "all" ||
+    status !== "all" ||
+    group_name !== "all" ||
+    type !== "GROUP_STAGE";
 
-  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -157,22 +165,37 @@ export function MatchesList() {
             </SelectContent>
           </Select>
 
-          <Select
-            value={group_name}
-            onValueChange={(val) => setParam("group_name", val)}
-          >
+          <Select value={type} onValueChange={(val) => setParam("type", val)}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by Group" />
+              <SelectValue placeholder="Filter by Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Group</SelectItem>
-              {FIFA_WORLD_CUP_GROUPS.map((data) => (
+              {FIFA_WORLD_CUP_TYPES.map((data) => (
                 <SelectItem key={data} value={data}>
-                  Group {data}
+                  {data}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
+          {type?.toUpperCase() === "GROUP_STAGE" && (
+            <Select
+              value={group_name}
+              onValueChange={(val) => setParam("group_name", val)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by Group" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Group</SelectItem>
+                {FIFA_WORLD_CUP_GROUPS.map((data) => (
+                  <SelectItem key={data} value={data}>
+                    Group {data}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
 
           {hasActiveFilters && (
             <Button

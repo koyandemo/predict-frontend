@@ -12,7 +12,7 @@ export default async function HomePage() {
   const matchesRes = await getAllMatches({
     league_id: String(FIFA_CLUB_WORLD_CUP_LEAGUE_ID),
     page: 1,
-    type: "GROUP_STAGE",
+    // type: "ROUND_OF_16",
     limit: 200,
   });
 

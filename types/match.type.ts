@@ -1,22 +1,26 @@
 import { LeagueT } from "./league.type";
 import { TeamT } from "./team.type";
 
+export type MatchStatusT = "SCHEDULED" | "LIVE" | "FINISHED" | "POSTPONED";
+export type MatchTypeT =
+  | "NORMAL"
+  | "FINAL"
+  | "SEMIFINAL"
+  | "QUARTERFINAL"
+  | "THIRD_PLACE_PLAYOFF"
+  | "ROUND_OF_32"
+  | "ROUND_OF_16"
+  | "GROUP_STAGE"
+  | "FRIENDLY";
+
 export type MatchT = {
   id: number;
   kickoff: string;
   timezone: string;
   venue: string;
   slug: string;
-  status: "SCHEDULED" | "LIVE" | "FINISHED" | "POSTPONED";
-  type:
-    | "NORMAL"
-    | "FINAL"
-    | "SEMIFINAL"
-    | "QUARTERFINAL"
-    | "THIRD_PLACE_PLAYOFF"
-    | "ROUND_OF_16"
-    | "GROUP_STAGE"
-    | "FRIENDLY";
+  status: MatchStatusT;
+  type: MatchTypeT;
   allow_draw: boolean;
   big_match: boolean;
   derby: boolean;
@@ -72,10 +76,16 @@ export interface ApiMatchT {
 export type MatchFilterT = {
   league_id?: string | null;
   season_id?: string | null;
-  gameweek_id?: string|null;
-  status?: "SCHEDULED" | "LIVE" | "FINISHED" | "POSTPONED" | "all";
-  type?: string;
-  group_name?: string|null;
+  gameweek_id?: string | null;
+  status?: MatchStatusT | "all";
+  type?:
+    | "GROUP_STAGE"
+    | "ROUND_OF_32"
+    | "ROUND_OF_16"
+    | "QUARTERFINAL"
+    | "SEMIFINAL"
+    | "FINAL";
+  group_name?: string | null;
   published?: boolean;
   from?: string;
   to?: string;
