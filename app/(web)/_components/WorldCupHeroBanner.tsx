@@ -21,7 +21,7 @@ const WorldCupHeroBanner = () => {
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2 text-sm">
             <Users className="w-4 h-4" />
-            <span>42 Teams</span>
+            <span>48 Teams</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="w-4 h-4" />

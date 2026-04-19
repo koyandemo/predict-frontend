@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { GoogleAnalysis } from "@/components/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -94,6 +95,7 @@ export default function RootLayout({
           </div>
         </AuthProviderClient>
         <Toaster richColors />
+        <GoogleAnalysis id="G-XKR44B4TC7" />
       </body>
     </html>
   );
