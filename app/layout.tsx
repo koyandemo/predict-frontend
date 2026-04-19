@@ -7,6 +7,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { GoogleAnalysis } from "@/components/GoogleAnalytics";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -95,7 +96,19 @@ export default function RootLayout({
           </div>
         </AuthProviderClient>
         <Toaster richColors />
-        <GoogleAnalysis id="G-XKR44B4TC7" />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-XKR44B4TC7`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga-script" strategy="afterInteractive">
+          {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-XKR44B4TC7');
+  `}
+        </Script>
       </body>
     </html>
   );
