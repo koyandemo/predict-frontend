@@ -12,6 +12,8 @@ import { clsx, type ClassValue } from "clsx";
 import { LucideIcon, MessageSquare, TrendingUp, Users } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
+export const MAIN_EMAIL = "predictocean8@gmail.com"
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
