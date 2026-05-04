@@ -7,12 +7,13 @@ import {
 } from "@/lib/fifaWorldCupUtils";
 import WorldCupHeroBanner from "./_components/WorldCupHeroBanner";
 
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const matchesRes = await getAllMatches({
     league_id: String(FIFA_CLUB_WORLD_CUP_LEAGUE_ID),
     page: 1,
-    // type: "ROUND_OF_16",
+    type: "GROUP_STAGE",
     limit: 200,
   });
 

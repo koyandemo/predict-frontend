@@ -50,7 +50,7 @@ export function MatchCard({ match }: MatchCardProps) {
       if (!res.success || !res.data) return null;
       return res.data;
     },
-    staleTime: 1000 * 60 * 2,
+    gcTime:0
   });
 
   const percentages = useMemo(() => {

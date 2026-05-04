@@ -9,7 +9,7 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
-export const isUpcoming = (match: MatchT) => match.status !== "FINISHED";
+export const isUpcoming = (match: MatchT) => match.status !== "FINISHED" ;
 export const isFinal = (m: MatchT) => m.type === "FINAL";
 export const isSemiFinal = (m: MatchT) => m.type === "SEMIFINAL";
 export const isQuarterFinal = (m: MatchT) => m.type === "QUARTERFINAL";
