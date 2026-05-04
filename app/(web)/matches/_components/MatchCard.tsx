@@ -77,7 +77,7 @@ export function MatchCard({ match }: MatchCardProps) {
     <Link href={`/matches/${match.id}`}>
       <Card className="group p-0 h-full cursor-pointer overflow-hidden bg-card/80 backdrop-blur-sm shadow-md transition-all hover:border-primary/50 hover:shadow-lg">
         <CardContent className="flex h-full flex-col p-0">
-          <div className="flex items-center justify-between border-b border-border bg-linear-to-r from-primary/10 to-secondary/10 p-3">
+          <div className="flex items-center justify-between border-b border-border bg-linear-to-r from-primary/10 to-secondary/10 py-3">
             <div className="flex gap-2 flex-wrap">
               {match.group_name && match.type === "GROUP_STAGE" && (
                 <Badge variant="outline" className="text-xs font-medium">
@@ -86,7 +86,7 @@ export function MatchCard({ match }: MatchCardProps) {
               )}
               
               {match.type !== "GROUP_STAGE" && (
-                <Badge variant="outline" className="text-xs font-medium">
+                <Badge variant="outline" className="text-[10px] font-medium">
                   {match.type}
                 </Badge>
               )}
@@ -97,7 +97,7 @@ export function MatchCard({ match }: MatchCardProps) {
 
             <Badge
               variant={getStatusBadgeVariant(displayStatus)}
-              className="flex items-center gap-1 text-xs font-medium"
+              className="flex items-center gap-1 text-[10px] font-medium"
             >
               {displayStatus === "live" && (
                 <>
