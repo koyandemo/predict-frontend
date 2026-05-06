@@ -59,7 +59,7 @@ export const useWinnerVote = (leagueSeasonId: number): UseWinnerVoteResult => {
   const submitVote = async (teamId: number): Promise<boolean> => {
     try {
       setError(null);
-
+      console.log(userVote,"62")
       if (userVote) {
         const response = await updateWinnerVote(userVote.id, { team_id: teamId });
         if (response.success && response.data) {

@@ -28,6 +28,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID } from "@/lib/fifaWorldCupUtils";
+import { useSession } from "next-auth/react";
+import { UserT } from "@/types/user.type";
+import { usePathname, useRouter } from "next/navigation";
 
 
 export default function WorldCupVotingPage() {
@@ -38,6 +41,11 @@ export default function WorldCupVotingPage() {
     hasVoted,
     submitVote,
   } = useWinnerVote(FIFA_CLUB_WORLD_CUP_LEAGUE_ID);
+   const { data: session} = useSession();
+  const user = session?.user as UserT;
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   const [teams, setTeams] = useState<TeamWithVotesT[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,6 +94,10 @@ export default function WorldCupVotingPage() {
   };
 
   const handleVote = async (teamId: number) => {
+    if(!user){
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`)
+      return;
+    }
     setIsSubmitting(true);
     const success = await submitVote(teamId);
     setIsSubmitting(false);

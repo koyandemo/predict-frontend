@@ -17,7 +17,7 @@ export function MatchHeader({ match }: MatchHeaderProps) {
     <header>
       <div className="container mx-auto px-4 py-4 md:py-6">
         <Link
-          href="/"
+          href="/matches"
           className="inline-flex items-center gap-2 mb-6 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />

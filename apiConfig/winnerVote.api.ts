@@ -77,7 +77,7 @@ export const getUserWinnerVote = async (
   leagueSeasonId: number
 ): Promise<ApiResponseT<UserWinnerVoteT | null>> => {
   try {
-    const response = await apiConfig.get(`/winner-votes/user/${leagueSeasonId}`);
+    const response = await apiConfig.get(`/winner-votes/user/${leagueSeasonId}/key`);
     const result = response.data;
 
     if (!result.success) {
@@ -104,7 +104,7 @@ export const createWinnerVote = async (
   data: { league_season_id: number; team_id: number }
 ): Promise<ApiResponseT<UserWinnerVoteT>> => {
   try {
-    const response = await apiConfig.post("/winner-votes/vote", data);
+    const response = await apiConfig.post("/winner-votes/vote/key", data);
     const result = response.data;
 
     if (!result.success) {
