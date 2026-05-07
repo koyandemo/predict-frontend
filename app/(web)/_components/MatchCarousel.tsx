@@ -53,7 +53,7 @@ export function MatchCarousel({
     }
   };
 
-  const limitedMatches = matches.slice(0, 10);
+  const limitedMatches = matches;
 
   return (
     <div className="space-y-4">

@@ -1,6 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
-export function MatchListSkeleton() {
+type Props = {
+  size?:number;
+}
+
+export function MatchListSkeleton({size=4}:Props) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -14,7 +18,7 @@ export function MatchListSkeleton() {
       
       {/* Match Cards Grid */}
       <div className="grid mt-5 gap-3 md:gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(size)].map((_, i) => (
           <div key={i} className="bg-card rounded-xl border border-border p-4">
             <div className="flex items-center justify-between mb-4">
               <Skeleton className="h-4 w-24" />
