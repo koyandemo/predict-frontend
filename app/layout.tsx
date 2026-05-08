@@ -7,6 +7,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { Toaster } from "sonner";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -96,6 +97,11 @@ export default function RootLayout({
         </AuthProviderClient>
         <Toaster richColors />
         <GoogleAnalytics id="G-XKR44B4TC7" />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8231130737970098"
+          crossOrigin="anonymous"
+        />
       </body>
     </html>
   );
