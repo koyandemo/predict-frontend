@@ -169,7 +169,7 @@ export default function GroupInfiniteScroll() {
         />
       ))}
 
-      {loadingGroup && <MatchListSkeleton size={4} />}
+      {loadingGroup && <MatchListSkeleton size={4} isCarousel={true} />}
 
       {!hasMore &&
         knockoutSections.map(({ title, matches }) => (
