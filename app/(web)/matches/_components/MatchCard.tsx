@@ -74,7 +74,7 @@ export function MatchCard({ match }: MatchCardProps) {
     percentages.away > percentages.home && percentages.away > percentages.draw;
 
   return (
-    <Link href={`/matches/${match.id}`}>
+    <Link href={`/matches/${match.id}`} target="_blank">
       <Card className="group p-0 h-full cursor-pointer overflow-hidden bg-card/80 backdrop-blur-sm shadow-md transition-all hover:border-primary/50 hover:shadow-lg">
         <CardContent className="flex h-full flex-col p-0">
           <div className="flex items-center justify-between border-b border-border bg-linear-to-r from-primary/10 to-secondary/10 py-3">
