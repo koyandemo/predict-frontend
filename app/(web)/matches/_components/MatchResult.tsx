@@ -44,7 +44,7 @@ export function MatchResult({ match }: Props) {
       <CardContent>
         {status.showScores ? (
           <>
-            <ScoreDisplay match={match} />
+            {displayStatus === "finished" && <ScoreDisplay match={match} />}
 
             {displayStatus === "live" && (
               <p className="text-center text-sm text-orange-500 font-medium">
