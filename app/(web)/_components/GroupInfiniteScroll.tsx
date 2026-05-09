@@ -53,7 +53,7 @@ async function fetchKnockoutMatches() {
 async function fetchGroupMatches(group: GroupName) {
   const res = await getAllMatches({
     league_id: String(FIFA_CLUB_WORLD_CUP_LEAGUE_ID),
-    page: 2,
+    page: 1,
     type: "GROUP_STAGE",
     group_name: group,
     limit: 200,
@@ -94,14 +94,6 @@ export default function GroupInfiniteScroll() {
 
     const group = GROUP_NAMES[nextIndexRef.current];
     nextIndexRef.current += 1;
-
-    // Use React Query cache for each group — refetch on page refresh
-    // const matches = await queryClient.fetchQuery({
-    //   queryKey: matchQueryKeys.group(group),
-    //   queryFn: () => fetchGroupMatches(group),
-    //   staleTime: 0,           // always refetch on page refresh
-    //   gcTime: 5 * 60 * 1000, // keep in cache during infinite scroll session
-    // });
 
     const matches = await queryClient.ensureQueryData({
       queryKey: matchQueryKeys.group(group),
