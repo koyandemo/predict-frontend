@@ -27,7 +27,7 @@ export default function VotingPanel({ match, onVoteUpdate }: Props) {
           Cast Your Vote
           <span className="text-sm text-muted-foreground flex items-center gap-1">
             <Users className="w-4 h-4" />
-            {totalVotes}
+            {totalVotes.toLocaleString()}
           </span>
         </CardTitle>
       </CardHeader>

@@ -178,3 +178,16 @@ export const generateGameWeeks = (startIndex: number) => {
 
   return Array.from({ length: length > 0 ? length : 0 }, (_, i) => startIndex + i);
 };
+
+export const compactNumber = (num:number) => {
+  if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(1).replace(".0", "") + "B";
+  }
+  if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1).replace(".0", "") + "M";
+  }
+  if (num >= 1_000) {
+    return (num / 1_000).toFixed(1).replace(".0", "") + "K";
+  }
+  return num.toString();
+};

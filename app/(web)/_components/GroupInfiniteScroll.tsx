@@ -53,7 +53,7 @@ async function fetchKnockoutMatches() {
 async function fetchGroupMatches(group: GroupName) {
   const res = await getAllMatches({
     league_id: String(FIFA_CLUB_WORLD_CUP_LEAGUE_ID),
-    page: 1,
+    page: 2,
     type: "GROUP_STAGE",
     group_name: group,
     limit: 200,

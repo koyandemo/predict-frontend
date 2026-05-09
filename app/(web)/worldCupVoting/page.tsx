@@ -31,6 +31,7 @@ import { FIFA_CLUB_WORLD_CUP_LEAGUE_ID } from "@/lib/fifaWorldCupUtils";
 import { useSession } from "next-auth/react";
 import { UserT } from "@/types/user.type";
 import { usePathname, useRouter } from "next/navigation";
+import { compactNumber } from "@/lib/utils";
 
 
 export default function WorldCupVotingPage() {
@@ -351,7 +352,7 @@ export default function WorldCupVotingPage() {
                         <div className="flex justify-between text-xs mt-1">
                           <span className="text-slate-400">
                             <Users className="h-3 w-3 inline mr-1" />
-                            {team.total_votes.toLocaleString()} votes
+                            {compactNumber(team.total_votes)} votes
                           </span>
                           <span className="wc-pct-label">{pct}%</span>
                         </div>
