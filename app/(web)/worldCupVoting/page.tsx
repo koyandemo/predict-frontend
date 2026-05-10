@@ -33,7 +33,6 @@ import { UserT } from "@/types/user.type";
 import { usePathname, useRouter } from "next/navigation";
 import { compactNumber } from "@/lib/utils";
 
-
 export default function WorldCupVotingPage() {
   const {
     userVote,
@@ -42,7 +41,7 @@ export default function WorldCupVotingPage() {
     hasVoted,
     submitVote,
   } = useWinnerVote(FIFA_CLUB_WORLD_CUP_LEAGUE_ID);
-   const { data: session} = useSession();
+  const { data: session } = useSession();
   const user = session?.user as UserT;
 
   const router = useRouter();
@@ -70,7 +69,7 @@ export default function WorldCupVotingPage() {
       }
     };
     fetchTeams();
-  },[]);
+  }, []);
 
   const teamsByGroup = useMemo(() => {
     const grouped: Record<string, TeamWithVotesT[]> = {};
@@ -95,8 +94,8 @@ export default function WorldCupVotingPage() {
   };
 
   const handleVote = async (teamId: number) => {
-    if(!user){
-      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`)
+    if (!user) {
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
     setIsSubmitting(true);
@@ -126,14 +125,14 @@ export default function WorldCupVotingPage() {
           <div className="wc-spinner mx-auto mb-6" />
           <p className="wc-loading-text">Loading the squads…</p>
         </div>
-        <style>{styles}</style>
+        <style>{updatedStyles}</style>
       </div>
     );
   }
 
   return (
     <div className="wc-root min-h-screen">
-      <style>{styles}</style>
+      <style>{updatedStyles}</style>
 
       {/* ── HERO ── */}
       <header className="wc-hero">
@@ -211,64 +210,74 @@ export default function WorldCupVotingPage() {
                     onClick={() => handleTeamClick(team)}
                     className={`wc-leader-row ${isVoted ? "wc-leader-row--voted" : ""} ${index < 3 ? "wc-leader-row--podium" : ""}`}
                   >
-                    {/* rank */}
-                    <span className={`wc-rank ${medal.color}`}>
-                      {medal.emoji}
-                    </span>
-
-                    {/* logo */}
-                    <div className="wc-team-logo-sm">
-                      {team.logo_url ? (
-                        <Image src={team.logo_url} alt={team.name} fill className="object-contain" />
-                      ) : (
-                        <Shield className="h-6 w-6 text-slate-500" />
-                      )}
-                    </div>
-
-                    {/* name + country */}
-                    <div className="wc-team-info flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="wc-team-name">{team.name}</span>
-                        {team.isHost && (
-                          <span className="wc-host-badge">
-                            <Flame className="h-3 w-3 mr-1" /> Host
-                          </span>
-                        )}
-                        {isVoted && (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                        )}
-                      </div>
-                      <span className="wc-team-country">
-                        <Globe className="h-3 w-3 mr-1 inline" />
-                        {team.country}
-                        {team.group_name && (
-                          <> &nbsp;·&nbsp; Group {team.group_name}</>
-                        )}
+                    {/* Header Section: Rank + Logo + Info */}
+                    <div className="wc-leader-header">
+                      {/* rank */}
+                      <span className={`wc-rank ${medal.color}`}>
+                        {medal.emoji}
                       </span>
-                    </div>
 
-                    {/* votes + bar */}
-                    <div className="wc-vote-col">
-                      <div className="wc-vote-bar-wrap">
-                        <Progress value={parseFloat(pct)} className="wc-vote-bar" />
+                      {/* logo */}
+                      <div className="wc-team-logo-sm">
+                        {team.logo_url ? (
+                          <Image src={team.logo_url} alt={team.name} fill className="object-contain" />
+                        ) : (
+                          <Shield className="h-6 w-6 text-slate-500" />
+                        )}
                       </div>
-                      <div className="wc-vote-pct">{pct}%</div>
-                      <div className="wc-vote-count">{team.total_votes.toLocaleString()}</div>
+
+                      {/* name + country */}
+                      <div className="wc-team-info flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="wc-team-name">{team.name}</span>
+                          {team.isHost && (
+                            <span className="wc-host-badge">
+                              <Flame className="h-3 w-3 mr-1" /> Host
+                            </span>
+                          )}
+                          {isVoted && (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                          )}
+                        </div>
+                        <span className="wc-team-country">
+                          <Globe className="h-3 w-3 mr-1 inline" />
+                          {team.country}
+                          {team.group_name && (
+                            <> · Group {team.group_name}</>
+                          )}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* action */}
-                    <Button
-                      size="sm"
-                      variant={isVoted ? "outline" : "default"}
-                      onClick={(e) => { e.stopPropagation(); handleTeamClick(team); }}
-                      className={isVoted ? "wc-btn-voted" : "wc-btn-vote"}
-                    >
-                      {isVoted ? (
-                        <><CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Voted</>
-                      ) : (
-                        <><Vote className="h-3.5 w-3.5 mr-1" /> Vote</>
-                      )}
-                    </Button>
+                    {/* Footer Section: Progress + Stats + Button */}
+                    <div className="wc-leader-footer">
+                      {/* votes + bar */}
+                      <div className="wc-vote-col">
+                        <div className="wc-vote-bar-wrap">
+                          <Progress value={parseFloat(pct)} className="wc-vote-bar" />
+                        </div>
+                        <div className="wc-vote-stats-row">
+                          <div className="wc-vote-pct">{pct}%</div>
+                          <div className="wc-vote-count">
+                            {team.total_votes.toLocaleString()} votes
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* action */}
+                      <Button
+                        size="sm"
+                        variant={isVoted ? "outline" : "default"}
+                        onClick={(e) => { e.stopPropagation(); handleTeamClick(team); }}
+                        className={isVoted ? "wc-btn-voted" : "wc-btn-vote"}
+                      >
+                        {isVoted ? (
+                          <><CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Voted</>
+                        ) : (
+                          <><Vote className="h-3.5 w-3.5 mr-1" /> Vote</>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
@@ -502,9 +511,9 @@ export default function WorldCupVotingPage() {
 }
 
 /* ─────────────────────────────────────────────
-   STYLES
+   UPDATED STYLES (Mobile Responsive)
 ───────────────────────────────────────────── */
-const styles = `
+const updatedStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
 
   :root {
@@ -628,10 +637,13 @@ const styles = `
 
   /* ── TABS ── */
   .wc-tab-list {
-    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    display: flex;
     background: transparent;
     padding: 0;
     height: auto;
+    width: 100%;
+    position: relative;
+    z-index: 10;
   }
   .wc-tab-trigger {
     font-family: 'DM Sans', sans-serif;
@@ -645,6 +657,8 @@ const styles = `
     border-radius: 6px;
     padding: 0.45rem 1rem;
     transition: all 0.15s;
+    white-space: nowrap; /* Ensure tabs don't wrap text */
+    flex-shrink: 0; /* Prevent shrinking */
   }
   .wc-tab-trigger[data-state='active'] {
     background: var(--wc-gold);
@@ -655,10 +669,13 @@ const styles = `
 
   /* ── LEADERBOARD ── */
   .wc-leaderboard-grid {
-    display: flex; flex-direction: column; gap: 0.4rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
   }
   .wc-leader-row {
-    display: flex; align-items: center; gap: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     background: var(--wc-surface);
     border: 1px solid var(--wc-border);
     border-radius: 10px;
@@ -674,6 +691,12 @@ const styles = `
   .wc-leader-row--podium {
     border-color: rgba(212,160,23,0.25);
   }
+  
+  /* Leaderboard Header (Rank + Logo + Info) */
+  .wc-leader-header {
+    display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0;
+  }
+
   .wc-rank {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.1rem;
@@ -699,11 +722,20 @@ const styles = `
     color: var(--wc-muted);
     display: flex; align-items: center;
   }
+
+  /* Leaderboard Footer (Vote Column + Button) */
+  .wc-leader-footer {
+    display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+  }
+
   .wc-vote-col {
     display: flex; align-items: center; gap: 0.75rem;
-    flex-shrink: 0;
   }
   .wc-vote-bar-wrap { width: 100px; }
+  /* Wrapper for stats to handle mobile spacing */
+  .wc-vote-stats-row {
+    display: flex; align-items: center; gap: 0.5rem;
+  }
   .wc-vote-pct {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1rem;
@@ -714,7 +746,7 @@ const styles = `
   .wc-vote-count {
     font-size: 0.75rem;
     color: var(--wc-muted);
-    min-width: 3rem;
+    min-width: 4rem; /* Wider for "votes" text */
     text-align: right;
   }
 
@@ -909,8 +941,66 @@ const styles = `
     padding: 0.1rem 0;
   }
 
+  /* ── RESPONSIVE UPDATES ── */
   @media (max-width: 640px) {
-    .wc-vote-col { display: none; }
+    /* 1. Make Tabs Scrollable */
+    .wc-tab-list {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      justify-content: flex-start;
+      padding-bottom: 8px; /* Space for scroll interaction */
+      scrollbar-width: none; /* Firefox */
+    }
+    .wc-tab-list::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+    /* 2. Stack Leaderboard Rows */
+    .wc-leader-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .wc-leader-header {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    /* 3. Show & Expand Vote Column */
+    .wc-vote-col {
+      display: flex !important;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 0.5rem;
+      align-items: stretch;
+    }
+    .wc-vote-bar-wrap { width: 100%; }
+    
+    /* Style stats row below bar */
+    .wc-vote-stats-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 0.25rem;
+    }
+    .wc-vote-pct {
+      font-size: 1.25rem; /* Bigger percentage on mobile */
+      text-align: left;
+    }
+    .wc-vote-count {
+      text-align: right;
+      font-size: 0.8rem;
+    }
+
+    /* 4. Full Width Button */
+    .wc-leader-footer {
+      display: flex;
+      flex-direction:column;
+      width: 100%;
+    }
+    .wc-leader-footer button {
+      width: 100%;
+    }
+
+    /* Card Grid adjustments */
     .wc-cards-grid { grid-template-columns: 1fr 1fr; }
     .wc-dialog-stats { flex-wrap: wrap; }
   }
