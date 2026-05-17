@@ -48,7 +48,7 @@ const buildFilters = (
   group_name: string,
   type: MatchTypeT,
   search: string,
-  page: number
+  page: number,
 ) => {
   const filters: Record<string, string | number> = {
     page,
@@ -70,13 +70,13 @@ export function MatchesList() {
   const league_id = normalize(searchParams.get("league_id"));
   const status = normalize(
     searchParams.get("status")?.toUpperCase() as string,
-    "all"
+    "all",
   );
   const group_name = normalize(searchParams.get("group_name"));
   const type = normalize(searchParams.get("type") || "GROUP_STAGE");
 
   const [searchInput, setSearchInput] = useState(
-    searchParams.get("search") ?? ""
+    searchParams.get("search") ?? "",
   );
   const debouncedSearch = useDebounce(searchInput, DEBOUNCE_MS);
 
@@ -137,9 +137,9 @@ export function MatchesList() {
         group_name,
         type as MatchTypeT,
         debouncedSearch,
-        pageParam as number
+        pageParam as number,
       );
-      const res = await getAllMatches(filters as  any);
+      const res = await getAllMatches(filters as any);
       if (!res.success || !res.data) {
         throw new Error(res.error ?? "Failed to fetch matches");
       }
@@ -154,7 +154,7 @@ export function MatchesList() {
 
   const matches = useMemo(
     () => data?.pages.flatMap((page) => page) ?? [],
-    [data]
+    [data],
   );
 
   useEffect(() => {
@@ -344,22 +344,22 @@ export function MatchesList() {
                     className="bg-card rounded-xl border border-border p-4 h-[200px]"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-5 w-16 rounded-full" />
+                      <Skeleton className="h-4 w-20 sm:w-24" />
+                      <Skeleton className="h-5 w-14 sm:w-16 rounded-full" />
                     </div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3 flex-1">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <Skeleton className="h-5 w-24" />
+                    <div className="flex items-center justify-between mb-4 gap-1">
+                      <div className="flex items-center gap-1 sm:gap-3 flex-1 min-w-0">
+                        <Skeleton className="h-9 w-9 sm:h-12 sm:w-12 rounded-full shrink-0" />
+                        <Skeleton className="h-4 w-16 sm:w-24" />
                       </div>
-                      <Skeleton className="h-8 w-12 rounded-lg" />
-                      <div className="flex items-center gap-3 flex-1 justify-end">
-                        <Skeleton className="h-5 w-24" />
-                        <Skeleton className="h-12 w-12 rounded-full" />
+                      <Skeleton className="h-7 sm:h-8 w-10 sm:w-12 rounded-lg shrink-0" />
+                      <div className="flex items-center gap-1 sm:gap-3 flex-1 min-w-0 justify-end">
+                        <Skeleton className="h-4 w-16 sm:w-24" />
+                        <Skeleton className="h-9 w-9 sm:h-12 sm:w-12 rounded-full shrink-0" />
                       </div>
                     </div>
                     <Skeleton className="h-2 w-full rounded-full mb-2" />
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center">
                       <Skeleton className="h-3 w-20" />
                     </div>
                   </div>
